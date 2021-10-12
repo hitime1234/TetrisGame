@@ -96,6 +96,7 @@ public class MainMenuScreen implements Screen {
             @Override
             public boolean touchDown(InputEvent event,float x,float y,int pointer,int button) {
                 System.out.println("button 3");
+                dispose();
                 game.setScreen(new GameScreen(game));
                 return true;
             }
