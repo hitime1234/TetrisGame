@@ -13,6 +13,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
+import com.badlogic.*;
 
 public class TetrisTheGame implements Screen {
     private final Stage stage;
@@ -27,6 +28,7 @@ public class TetrisTheGame implements Screen {
     private float x;
     private float width;
     private float height;
+    private int Sleep =0;
 
 
     public TetrisTheGame(MyGdxGame game,int speedInt,int randomValue) {
@@ -40,7 +42,10 @@ public class TetrisTheGame implements Screen {
 
         batch = new SpriteBatch();
         img = new Texture("badlogic.jpg");
-
+        height = 50;
+        width = 20;
+        x= 300;
+        y=300;
     }
 
 
@@ -53,7 +58,6 @@ public class TetrisTheGame implements Screen {
     public void render(float delta) {
         Gdx.gl.glClearColor(0, 0, 0.2f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        y = y + 100;
         ScreenUtils.clear(0, 0, 0.2f, 1);
         camera.update();
         batch.setProjectionMatrix(camera.combined);
@@ -63,10 +67,26 @@ public class TetrisTheGame implements Screen {
 
         shapeRenderer = new ShapeRenderer();
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-        height = 50;
-        width = 20;
-        x= 300;
-        y=300;
+        if (y != 0) {
+            y = y - speed;
+        }
+        else{
+            //new shape
+            shapeRenderer.rect(x,300,width,height);
+
+        }
+        Sleep = Sleep - 100;
+        if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) && Sleep < 0){
+            x = x +30;
+            Sleep = 1000;
+        }
+        if (Gdx.input.isKeyPressed(Input.Keys.LEFT) && Sleep < 0){
+            x = x -30;
+            Sleep = 1000;
+        }
+
+
+
         shapeRenderer.rect(x,y,width,height);
         shapeRenderer.end();
 
