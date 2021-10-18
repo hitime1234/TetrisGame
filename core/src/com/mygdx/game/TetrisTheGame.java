@@ -16,6 +16,9 @@ import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.*;
 
 public class TetrisTheGame implements Screen {
+
+
+
     private final Stage stage;
     private ShapeRenderer shapeRenderer;
     SpriteBatch batch;
@@ -65,9 +68,9 @@ public class TetrisTheGame implements Screen {
 
 
 
-        shapeRenderer = new ShapeRenderer();
+        //shapeRenderer = new ShapeRenderer();
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-        if (y != 0) {
+        if (y > 0) {
             y = y - speed;
         }
         else{
@@ -76,11 +79,11 @@ public class TetrisTheGame implements Screen {
 
         }
         Sleep = Sleep - 100;
-        if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) && Sleep < 0){
+        if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) && Sleep < 0 && x >= 0){
             x = x +30;
             Sleep = 1000;
         }
-        if (Gdx.input.isKeyPressed(Input.Keys.LEFT) && Sleep < 0){
+        if (Gdx.input.isKeyPressed(Input.Keys.LEFT) && Sleep < 0 && x <= 780){
             x = x -30;
             Sleep = 1000;
         }
