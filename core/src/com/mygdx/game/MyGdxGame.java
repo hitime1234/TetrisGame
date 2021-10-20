@@ -22,8 +22,12 @@ public class MyGdxGame extends Game {
 	}
 
 	public void dispose() {
-		batch.dispose();
-		font.dispose();
+		try {
+			batch.dispose();
+			font.dispose();
+		}
+		catch (Exception e){
+		}
 	}
 
 }

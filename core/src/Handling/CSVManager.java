@@ -74,7 +74,6 @@ public class CSVManager {
         }
     }
 
-
     public String speed(){
         return Returner(5);
     }

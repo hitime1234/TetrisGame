@@ -1,5 +1,8 @@
 package com.mygdx.game;
 
+import Blocker.basicBlock;
+import Blocker.board;
+import Blocker.queue;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
@@ -20,6 +23,10 @@ public class TetrisTheGame implements Screen {
 
 
     private final Stage stage;
+    private final queue queuing;
+    private final board DeadBlock;
+    private int index;
+    private basicBlock hold;
     private ShapeRenderer shapeRenderer;
     SpriteBatch batch;
     Texture img;
@@ -32,6 +39,7 @@ public class TetrisTheGame implements Screen {
     private float width;
     private float height;
     private int Sleep =0;
+    private basicBlock[] DUMP;
 
 
     public TetrisTheGame(MyGdxGame game,int speedInt,int randomValue) {
@@ -42,19 +50,36 @@ public class TetrisTheGame implements Screen {
         stage = new Stage();
         shapeRenderer = new ShapeRenderer();
         camera.setToOrtho(false, 800, 480);
-
         batch = new SpriteBatch();
         img = new Texture("badlogic.jpg");
         height = 50;
         width = 20;
         x= 300;
         y=300;
+        DeadBlock = new board();
+        //ABOSLOUTE DUMPTRUCK
+        DUMP = new basicBlock[20];
+        queuing = new queue(shapeRenderer,speed);
+        hold = queuing.DeQueue();
+        index = 0;
+
     }
 
 
     @Override
     public void show() {
         
+    }
+
+    private void BLOCKER(){
+        try {
+            for (int i = 0; i < DUMP.length; i++) {
+                DUMP [i].draw();
+            }
+        }
+        catch(Exception e){
+
+        }
     }
 
     @Override
@@ -66,9 +91,22 @@ public class TetrisTheGame implements Screen {
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
 
+        hold.draw();
+        hold.pass();
+
+        if (hold.getY() ==0){
+            DUMP[index] = hold;
+            DeadBlock.add(hold);
+            //DeadBlock.Output();
+            hold = queuing.DeQueue();
+
+            index++;
+        }
+        BLOCKER();
 
 
-        //shapeRenderer = new ShapeRenderer();
+
+        //shapeRenderer = new  ShapeRenderer();
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
         if (y > 0) {
             y = y - speed;

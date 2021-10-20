@@ -1,23 +1,31 @@
 package Blocker;
 
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class queue {
-    private List<Object> objects = new ArrayList<>();
+    private RNGblock Builder;
+    private List<basicBlock> objects = new ArrayList<>();
 
-    public  queue(Object array[]){
-        for (int i=0;i<array.length;i++){
-            objects.add(array[array.length-i]);
+    public queue(ShapeRenderer Drawing,int speed) {
+        Random rand = new Random();
+        for (int i = 0; i < 20; i++) {
+            RNGblock hold = new RNGblock(Drawing,rand.nextInt(4),speed);
+            basicBlock BUILT = hold.getHold();
+            objects.add(BUILT);
         }
     }
 
-    public void addQueue(Object ob){
+
+    public void addQueue(basicBlock ob){
         objects.add(ob);
     }
-    public Object DeQueue(){
-        Object hold = objects.get(objects.size());
-        objects.remove(objects.size());
+    public basicBlock DeQueue(){
+        basicBlock hold = objects.get(objects.size()-1);
+        objects.remove(objects.size()-1);
         return hold;
     }
 }

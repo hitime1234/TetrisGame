@@ -25,7 +25,7 @@ public class GameScreen2 implements Screen {
     public GameScreen2(MyGdxGame game) {
         camera = new OrthographicCamera();
         bucketImage = new Texture(Gdx.files.internal("bucket.png"));
-        camera.setToOrtho(false, 800, 480);
+        camera.setToOrtho(false, 3000, 680);
         batch = new SpriteBatch();
         img = new Texture("badlogic.jpg");
         bucket = new Rectangle();
@@ -57,8 +57,8 @@ public class GameScreen2 implements Screen {
         camera.update();
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
-        for (int i=0;i<2;i++) {
-            batch.draw(bucketImage, bucket.x+(i*600), bucket.y);
+        for (int i=0;i<8;i++) {
+            batch.draw(bucketImage, bucket.x+(i*500), bucket.y);
         }
         batch.end();
     }

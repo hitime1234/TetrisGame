@@ -70,6 +70,7 @@ public class PracticeModeSelector implements Screen {
             public boolean touchDown(InputEvent event,float x,float y,int pointer,int button) {
                 System.out.println("button 3");
                 game.setScreen(new MainMenuScreen(game));
+                dispose();
                 return true;
             }
         });
@@ -82,8 +83,8 @@ public class PracticeModeSelector implements Screen {
             @Override
             public boolean touchDown(InputEvent event,float x,float y,int pointer,int button) {
                 System.out.println("Starting Game");
-                dispose();
                 game.setScreen(new TetrisTheGame(game,speedInt,ProFortniteGamer.RandomMode));
+                dispose();
                 return true;
             }
         });
