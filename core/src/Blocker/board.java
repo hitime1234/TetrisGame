@@ -35,57 +35,63 @@ public class board {
         int holdY = SomethingDumb.getX();
         int Type = SomethingDumb.Shape;
         int[][] vector = SomethingDumb.getVector();
+
         /**
          * new approached required
          * For example
          * there are SET shapes in tetris this good
          * meaning we can use a vector length calculator class
          */
-        for (int i=0;i< vector.length;i++){
+        //for (int i=0;i< vector.length;i++){
             //DrawX(vector[i][0],holdX,holdY);
             //DrawY(vector[i][1],holdX,holdY);
+
+        //}
+        DrawTypeRectangle(SomethingDumb);
+    }
+
+    public boolean Check(basicBlock SomethingDumb){
+        //bottom axis
+        int length = SomethingDumb.getLength();
+        int height = SomethingDumb.getHeight();
+        int vector[][] = SomethingDumb.getVector();
+        boolean hold = false;
+        //x axis
+        for (int i =0;i<length;i++){
+            if (Boarder[vector[0][1]][vector[0][0]+i] == 1){
+                hold = true;
+            }
+            else if(Boarder[vector[2][1]][vector[2][0]+i] == 1){
+                hold = true;
+            }
+        }
+
+        //y axis
+        for (int i =0;i<height;i++){
+            if (Boarder[vector[0][1]+i][vector[0][0]] == 1){hold = true;}
+            if (Boarder[vector[1][1]+i][vector[1][0]] == 1){hold = true;}
+        }
+        return hold;
+    }
+
+    public void DrawTypeRectangle(basicBlock hold){
+        //bottom axis
+        int length = hold.getLength();
+        int height = hold.getHeight();
+        int vector[][] = hold.getVector();
+        //x axis
+        for (int i =0;i<length;i++){
+            Boarder[vector[0][1]][vector[0][0]+i] = 1;
+            Boarder[vector[2][1]][vector[2][0]+i] = 1;
+        }
+
+        //y axis
+        for (int i =0;i<height;i++){
+            Boarder[vector[0][1]+i][vector[0][0]] = 1;
+            Boarder[vector[1][1]+i][vector[1][0]] = 1;
         }
     }
 
 
-    //broke Code
-    /**
-    public void DrawX(int start,int end,int Height){
-        System.out.println(start + " "+ end + " "+Height);
-        int loop;
-        System.out.println(end);
-        if ((start-end) <0){
-            loop = end-start;
-            for (int i=0;i<loop;i++){
-                Boarder[Height][end-1] = 1;
-            }
-        }
-        else{
-            loop = start -end;
-            for (int i=0;i<loop;i++){
-                Boarder[Height][end+i] = 1;
-            }
-        }
-
-    }
-    public void DrawY(int start,int end,int place){
-        System.out.println(start + " "+ end + " "+place);
-        int loop;
-        if ((start-end) <0){
-            loop = end-start;
-            for (int i=0;i<loop;i++){
-                Boarder[end-i][place] = 1;
-            }
-
-        }
-        else{
-            loop = start -end;
-            for (int i=0;i<loop;i++){
-                Boarder[end+i][place] = 1;
-            }
-        }
-
-    }
-    */
 }
 

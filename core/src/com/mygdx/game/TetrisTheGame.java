@@ -94,14 +94,22 @@ public class TetrisTheGame implements Screen {
         hold.draw();
         hold.pass();
 
+        if (DeadBlock.Check(hold) == true){
+            DUMP[index] = hold;
+            DeadBlock.add(hold);
+            DeadBlock.Output();
+            hold = queuing.DeQueue();
+            index++;
+        }
+
         if (hold.getY() ==0){
             DUMP[index] = hold;
             DeadBlock.add(hold);
-            //DeadBlock.Output();
+            DeadBlock.Output();
             hold = queuing.DeQueue();
-
             index++;
         }
+
         BLOCKER();
 
 

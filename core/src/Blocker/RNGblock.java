@@ -29,12 +29,16 @@ public class RNGblock {
                 break;
             case 1:
                 temp = HitTheL(draw);
+                break;
             case 2:
                 temp = BOX(draw);
+                break;
             case 3:
                 temp = TMan(draw);
+                break;
             case 4:
                 temp = diag(draw);
+                break;
             default:
                 temp = Line(draw);
         }
@@ -50,7 +54,6 @@ public class RNGblock {
     private basicBlock TMan(ShapeRenderer draw) {
         int Vector[][] = new int[2][2];
         return new basicBlock(draw,x,y,speed,Vector,1);
-
     }
 
     private basicBlock BOX(ShapeRenderer draw) {
@@ -62,18 +65,22 @@ public class RNGblock {
          */
         //Warning memes about vectors below
         //Oh yeah 2d Vector array Initialised
-        int Vector[][] = new int[2][2];
-        //NOW FOR THE VECTOR CUBE!!!
-        //Both magnitude AND DIRECTION AHAHAHAHAHAHHAHAH
+        int Vector[][] = new int[8][4];
         //[0,0]
-        Vector[0][0] = x; Vector[0][1] = y;
-        //[0,1]
-        Vector[1][0] = x+50; Vector[1][1] = y;
+        //X axis
+        Vector[0][0] = x;
+        //Y axis
+        Vector[0][1] = y;
+
         //[1,0]
-        Vector[1][0] = x; Vector[1][1] = y+50;
+        Vector[1][0] = x+50; Vector[1][1] = y;
+
+        //[0,1]
+        Vector[2][0] = x; Vector[2][1] = y+50;
+
         //[1,1]
-        Vector[1][0] = x+50; Vector[1][1] = y+50;
-        //o YEAH VECTOR CUBE NOW Has Stuff
+        Vector[3][0] = x+50; Vector[3][1] = y+50;
+
         return new basicBlock(draw,x,y,speed,Vector,0);
 
     }

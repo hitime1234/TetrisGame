@@ -10,16 +10,31 @@ public class basicBlock {
     int y;
     int speed;
     ShapeRenderer draw;
-    int[][] Vector;
+    private final int[][] Vector;
     int Shape = -1;
-    public basicBlock(ShapeRenderer draw, int x, int y, int speed,int[][] Vector,int shape){
+    private  int length;
+    private  int height;
+
+    public basicBlock(ShapeRenderer draw, int x, int y, int speed,int[][] vector,int shape){
         this.x = x;
         this.y = y;
         this.speed =speed;
         this.draw = draw;
-        this.Vector = Vector;
+        Vector = vector;
         this.Shape = shape;
+        switch (shape){
+            case 0:
+                length = 50;
+                height = 50;
+                break;
+
+            default:
+                length = 0;
+                height = 0;
+        }
     }
+
+
 
     public void setX(int x) {
         this.x = x;
@@ -38,7 +53,30 @@ public class basicBlock {
     }
 
     public int[][] getVector() {
+        if (Shape ==0) {
+            //X axis
+            Vector[0][0] = x;
+            //Y axis
+            Vector[0][1] = y;
+
+            //[1,0]
+            Vector[1][0] = x+50; Vector[1][1] = y;
+
+            //[0,1]
+            Vector[2][0] = x; Vector[2][1] = y+50;
+
+            //[1,1]
+            Vector[3][0] = x+50; Vector[3][1] = y+50;
+        }
         return Vector;
+    }
+
+    public int getLength() {
+        return length;
+    }
+
+    public int getHeight() {
+        return height;
     }
 
     public void setSpeed(int speed) {
@@ -47,6 +85,7 @@ public class basicBlock {
     public void pass(){
         y = y - speed;
     }
+
     public void draw(){
         draw.begin(ShapeRenderer.ShapeType.Filled);
         draw.rect(x,y,50,50);
