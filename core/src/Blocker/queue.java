@@ -14,7 +14,7 @@ public class queue {
         Random rand = new Random();
         for (int i = 0; i < 20; i++) {
             //rand.nextInt(0)
-            RNGblock hold = new RNGblock(Drawing,2,speed);
+            RNGblock hold = new RNGblock(Drawing, 4, speed);
             basicBlock BUILT = hold.getHold();
             objects.add(BUILT);
         }

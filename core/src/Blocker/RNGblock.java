@@ -37,22 +37,41 @@ public class RNGblock {
                 temp = TMan(draw);
                 break;
             case 4:
-                temp = diag(draw);
+                temp = diagR(draw);
+                break;
+            case 5:
+                temp = HitTheJ(draw);
+                break;
+
+            case 6:
+                temp = diagL(draw);
                 break;
             default:
                 temp = Line(draw);
+                break;
+
         }
         return temp;
     }
 
+    private basicBlock HitTheJ(ShapeRenderer draw) {
+        int Vector[][] = new int[8][2];
+        return new basicBlock(draw,x,y,speed, Vector,5);
+    }
 
-    private basicBlock diag(ShapeRenderer draw) {
-        int Vector[][] = new int[2][2];
+
+    private basicBlock diagR(ShapeRenderer draw) {
+        int Vector[][] = new int[8][2];
         return new basicBlock(draw,x,y,speed, Vector,4);
     }
 
+    private basicBlock diagL(ShapeRenderer draw) {
+        int Vector[][] = new int[8][2];
+        return new basicBlock(draw,x,y,speed, Vector,6);
+    }
+
     private basicBlock TMan(ShapeRenderer draw) {
-        int Vector[][] = new int[2][2];
+        int Vector[][] = new int[8][2];
         return new basicBlock(draw,x,y,speed,Vector,1);
     }
 
@@ -86,12 +105,27 @@ public class RNGblock {
     }
 
     private basicBlock HitTheL(ShapeRenderer draw) {
-        int Vector[][] = new int[2][2];
+        int Vector[][] = new int[8][4];
         return new basicBlock(draw,x,y,speed, Vector,2);
     }
 
     private basicBlock Line(ShapeRenderer draw) {
-        int Vector[][] = new int[2][2];
+        int Vector[][] = new int[8][4];
+        //[0,0]
+        //X axis
+        Vector[0][0] = x;
+        //Y axis
+        Vector[0][1] = y;
+
+        //[1,0]
+        Vector[1][0] = x+10; Vector[1][1] = y;
+
+        //[0,1]
+        Vector[2][0] = x; Vector[2][1] = y+50;
+
+        //[1,1]
+        Vector[3][0] = x+((25+1)/2); Vector[3][1] = y+50;
+
         return new basicBlock(draw,x,y,speed, Vector,3);
 
 
