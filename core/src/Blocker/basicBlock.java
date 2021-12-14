@@ -2,9 +2,10 @@ package Blocker;
 
 
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import org.graalvm.compiler.nodes.NodeView;
 
-import java.util.Vector;
+import java.lang.*;
+
+import static java.lang.Math.*;
 
 public class basicBlock {
     int x;
@@ -15,29 +16,24 @@ public class basicBlock {
     int Shape = -1;
     private int length = 25;
     private int height = 25;
-    private BasicCube[] cube;
-
-    public basicBlock(ShapeRenderer draw, int x, int y, int speed, int[][] vector, int shape) {
-        this.x = x;
-        this.y = y;
-        this.speed = speed;
-        this.draw = draw;
-        Vector = vector;
-        this.Shape = shape;
+    public BasicCube[] cube;
+    private Boolean Damage = false;
+    //this copium --jackus
+    //fix your code god dammit
 
 
-
-        switch (shape) {
+    private void CubeCreator(){
+        switch (Shape) {
             //cube
             case 0:
                 cube = new BasicCube[4];
-                cube[0] = new BasicCube(x - (0), y - (height), length, height, FindVector(x - (0), y - (height), length, height));
-                cube[1] = new BasicCube(x + (length), y - (height), length, height, FindVector(x + (length), y - (height), length, height));
-                cube[2] = new BasicCube(x - (0), y + (0), length, height, FindVector(x - (0), y + (0), length, height));
-                cube[3] = new BasicCube(x + (length), y + (0), length, height, FindVector(x + (length), y + (0), length, height));
+                cube[3] = new BasicCube(x - (0), y + (height), length, height, FindVector(x - (0), y + (height), length, height));
+                cube[2] = new BasicCube(x + (length), y + (height), length, height, FindVector(x + (length), y + (height), length, height));
+                cube[0] = new BasicCube(x - (0), y + (0), length, height, FindVector(x - (0), y + (0), length, height));
+                cube[1] = new BasicCube(x + (length), y + (0), length, height, FindVector(x + (length), y + (0), length, height));
                 break;
 
-                //T-Man
+            //T-Man
             case 1:
                 cube = new BasicCube[4];
                 cube[0] = new BasicCube(x,y+25,25,25,FindVector(x,y+25,25,25));
@@ -59,9 +55,9 @@ public class basicBlock {
             //line
             case 3:
                 cube = new BasicCube[4];
-                cube[0] = new BasicCube(x,y-25,25,25,FindVector(x,y-25,25,25));
+                cube[0] = new BasicCube(x,y+25,25,25,FindVector(x,y+25,25,25));
                 cube[1] = new BasicCube(x,y,25,25,FindVector(x,y,25,25));
-                cube[2] = new BasicCube(x,y+25,25,25,FindVector(x,y+25,25,25));
+                cube[2] = new BasicCube(x,y+75,25,25,FindVector(x,y+75,25,25));
                 cube[3] = new BasicCube(x,y+50,25,25,FindVector(x,y+50,25,25));
                 break;
 
@@ -86,7 +82,6 @@ public class basicBlock {
             //diag Left
             case 6:
                 cube = new BasicCube[4];
-                cube = new BasicCube[4];
                 cube[0] = new BasicCube(x-25,y,25,25,FindVector(x+25,y,25,25));
                 cube[1] = new BasicCube(x,y,25,25,FindVector(x,y,25,25));
                 cube[2] = new BasicCube(x-25,y+25,25,25,FindVector(x+25,y+25,25,25));
@@ -100,10 +95,283 @@ public class basicBlock {
         }
     }
 
-    public void flip(){
-        for (int i=0;i<getNumberOCubes();i++){
+
+
+    public basicBlock(ShapeRenderer draw, int x, int y, int speed, int[][] vector, int shape) {
+        this.x = x;
+        this.y = y;
+        this.speed = speed;
+        this.draw = draw;
+        Vector = vector;
+        this.Shape = shape;
+
+        CubeCreator();
+    }
+
+    public void flip() {
+        if (Shape != -1) {
+            for (int i = 0; i < getNumberOCubes(); i++) {
+                int newX = findingX(cube[i], i);
+                int newY = findingY(cube[i],i);
+                int storeAngle = cube[i].getAngler();
+                cube[i]= new BasicCube(newX, newY, 25, 25, FindVector(newX, newY, 25, 25));
+                cube[i].setAngler(storeAngle);
+            }
+        }
+    }
+
+    private int findingX(BasicCube basicCube, int i) {
+        int oldX = basicCube.getX();
+        int NewX = oldX;
+        switch (Shape){
+                //cube
+                case 0:
+                    NewX = oldX;
+                    break;
+                //T Man
+                case 1:
+                    switch (i){
+                        case 0:
+                            double rad = Math.toRadians(cube[i].getAngler());
+                            NewX = oldX+(((int)( Math.round(cos((rad+1)))))*25);
+                            cube[i].PassAngle();
+                            break;
+
+                        case 2:
+                            rad = Math.toRadians(cube[i].getAngler());
+                            NewX = oldX+(((int)( Math.round(sin(rad) +cos(rad))))*25);
+                            cube[i].PassAngle();
+                            break;
+
+                        case 3:
+                            rad = Math.toRadians(cube[i].getAngler());
+                            NewX = oldX+(((int)( Math.round(sin(rad) +cos((rad)))))*-25);
+                            cube[i].PassAngle();
+                            break;
+
+
+                        default:
+                            NewX = oldX;
+                            break;
+                    }
+                    break;
+
+
+                //L Piece
+                case 2:
+                    switch (i){
+                        case 0:
+                            double rad = Math.toRadians(cube[i].getAngler());
+                            NewX = oldX+(((int)( Math.round(cos((rad+1)))))*25);
+                            cube[i].PassAngle();
+                            break;
+
+                        case 1:
+                            NewX = oldX;
+                            cube[i].PassAngle();
+                            break;
+                        case 2:
+
+                            rad = Math.toRadians(cube[i].getAngler());
+                            NewX = oldX+(((int)( Math.round(sin(rad) +cos((rad)))))*-25);
+                            cube[i].PassAngle();
+                            break;
+
+
+                        case 3:
+                            rad = Math.toRadians(cube[i].getAngler());
+                            NewX = oldX+(((int)( Math.round(cos((rad+1)))))*25*2);
+                            cube[i].PassAngle();
+                            break;
+                        default:
+                            NewX =oldX;
+                            break;
+                    }
+                    break;
+
+
+
+            case 4:
+                switch (i){
+                    case 0:
+                        double rad = Math.toRadians(cube[i].getAngler());
+                        NewX = oldX+(((int)( Math.round(cos((rad+1)))))*25);
+                        cube[i].PassAngle();
+                        break;
+
+                    case 1:
+                        NewX = oldX;
+                        cube[i].PassAngle();
+                        break;
+                    case 2:
+
+                        rad = Math.toRadians(cube[i].getAngler());
+                        NewX = oldX+(((int)( Math.round(sin(rad) +cos((rad)))))*25);
+                        cube[i].PassAngle();
+                        break;
+
+
+                    case 3:
+                        rad = Math.toRadians(cube[i].getAngler());
+                        NewX = oldX+(((int)( Math.round(cos((rad+1)))))*25*2);
+                        cube[i].PassAngle();
+                        break;
+                    default:
+                        NewX =oldX;
+                        break;
+                }
+                break;
+
+
+
+
+
+                    //J piece
+                case 5:
+                    switch (i){
+                        case 0:
+                            double rad = Math.toRadians(cube[i].getAngler());
+                            NewX = oldX+(((int)( Math.round(cos((rad+1)))))*25);
+                            cube[i].PassAngle();
+                            break;
+
+                        case 1:
+                            NewX = oldX;
+                            cube[i].PassAngle();
+                            break;
+                        case 2:
+
+                            rad = Math.toRadians(cube[i].getAngler());
+                            NewX = oldX+(((int)( Math.round(sin(rad) +cos((rad)))))*25);
+                            cube[i].PassAngle();
+                            break;
+
+
+                        case 3:
+                            rad = Math.toRadians(cube[i].getAngler());
+                            NewX = oldX+(((int)( Math.round(cos((rad+1)))))*25*2);
+                            cube[i].PassAngle();
+                            break;
+                        default:
+                            NewX =oldX;
+                            break;
+                    }
+                    break;
+
+
+
 
         }
+        return NewX;
+    }
+
+    private int findingY(BasicCube basicCube, int i) {
+        int oldY = basicCube.getY();
+        int NewY = oldY;
+        switch (Shape){
+            case 0:
+                NewY = oldY;
+                break;
+            case 1:
+                switch (i){
+                    case 0:
+                        double rad = Math.toRadians(cube[i].getAngler());
+                        NewY = oldY+(((int)( Math.round(cos((rad+1)))))*25);
+                        break;
+                    case 2:
+                        rad = Math.toRadians(cube[i].getAngler());
+                        NewY = oldY+(((int)( Math.round(cos((rad-1)))))*25);
+                        //NewY = oldY+(((int)( Math.round(sin(rad) +cos((rad)))))*25);
+                        break;
+                    case 3:
+                        rad = Math.toRadians(cube[i].getAngler());
+                        NewY = oldY+(((int)( Math.round(cos(rad-1))*-25)));
+                        break;
+
+                    default:
+                        NewY = oldY;
+                        break;
+                }
+                break;
+            case 2:
+                switch (i){
+                    case 0:
+                        double rad = Math.toRadians(cube[i].getAngler());
+                        NewY = oldY+(((int)( Math.round(cos((rad+1)))))*25);
+
+                        break;
+                    case 1:
+                        NewY = oldY;
+                        break;
+                    case 2:
+                        rad = Math.toRadians(cube[2].getAngler());
+                        NewY = oldY+(((int)Math.round(1/(sin(rad)+cos(rad))))*-25);
+                        break;
+                    case 3:
+                        rad = Math.toRadians(cube[i].getAngler());
+                        NewY = oldY+(((int)( Math.round(cos((rad+1)))))*25*2);
+                        break;
+                    default:
+                        NewY =oldY;
+                        break;
+                }
+                break;
+
+            case 4:
+                switch (i){
+                    case 0:
+                        double rad = Math.toRadians(cube[i].getAngler());
+                        NewY = oldY+(((int)( Math.round(1/(sin(rad+PI/2)+cos(rad+PI/2))))*25));
+
+                        break;
+                    case 1:
+                        NewY = oldY;
+                        break;
+                    case 2:
+                        rad = Math.toRadians(cube[2].getAngler());
+                        NewY = oldY+(((int)Math.round(1/(sin(rad)+cos(rad))))*25);
+                        break;
+                    case 3:
+                        rad = Math.toRadians(cube[i].getAngler());
+                        NewY = oldY+(((int)( Math.round(cos((rad+1)))))*25*2);
+                        break;
+                    default:
+                        NewY =oldY;
+                        break;
+                }
+                break;
+
+
+
+
+            case 5:
+                switch (i){
+                    case 0:
+                        double rad = Math.toRadians(cube[i].getAngler());
+                        NewY = oldY+(((int)( Math.round(1/(sin(rad+PI/2)+cos(rad+PI/2))))*25));
+
+                        break;
+                    case 1:
+                        NewY = oldY;
+                        break;
+                    case 2:
+                        rad = Math.toRadians(cube[2].getAngler());
+                        NewY = oldY+(((int)Math.round(1/(sin(rad)+cos(rad))))*25);
+                        break;
+                    case 3:
+                        rad = Math.toRadians(cube[i].getAngler());
+                        NewY = oldY+(((int)( Math.round(cos((rad+1)))))*25*2);
+                        break;
+                    default:
+                        NewY =oldY;
+                        break;
+                }
+                break;
+
+
+
+        }
+        return NewY;
     }
 
     private int[][] FindVector(int Nx, int Ny, int nlength, int nheight) {
@@ -124,13 +392,21 @@ public class basicBlock {
     }
 
     public void setY(int y) {
-        int hold = y;
-        cube[0].setY(y*2 - (height));
-        cube[1].setY(y*2 - (height));
-        cube[2].setY(y*2);
-        cube[3].setY(y*2);
+        this.y = y;
+        this.x = cube[1].getX();
+        CubeCreator();
     }
 
+    public void dropY(int yDrop,int newStart){
+        y = y - yDrop;
+        for (int i=0;i<getNumberOCubes();i++){
+            if (cube[i] != null) {
+                if (cube[i].getY() >= newStart) {
+                    cube[i].setY(cube[i].getY() - yDrop);
+                }
+            }
+        }
+    }
 
     public void moveX(int x) {
         for (int i = 0; i < getNumberOCubes(); i++) {
@@ -166,22 +442,9 @@ public class basicBlock {
     }
 
     public boolean RemoveCube(int index) {
-        int count = 0;
-        boolean Result = false;
-        for (int i = 0; i < getNumberOCubes(); i++) {
-            if (cube[i] == null) {
-                count++;
-            }
-            if(cube[i].getY() == index) {
-                System.out.println(cube[i].getY());
-                cube[i] = null;
-            }
-        }
-        if (count == getNumberOCubes()) {
-            Result = true;
-        }
-        return Result;
+        return false;
     }
+
 
     public int[][] getVector(int index) {
         switch (Shape) {
@@ -245,22 +508,31 @@ public class basicBlock {
     }
 
     public void pass() {
-        y = y - speed;
+        y = y - 25;
         for (int i = 0; i < getNumberOCubes(); i++) {
-            cube[i].setY(cube[i].getY() - speed);
+            cube[i].setY(cube[i].getY() - 25);
         }
     }
 
     public void draw() {
-        for (int i = 0; i < getNumberOCubes(); i++) {
-            System.out.println("i:" + i);
-            int xHold = cube[i].getX();
-            int yHold = cube[i].getY();
-            int BLength = cube[i].getLength();
-            int BHeight = cube[i].getHeight();
-            draw.begin(ShapeRenderer.ShapeType.Filled);
-            draw.rect(xHold, yHold, BLength, BHeight);
-            draw.end();
+        for (int i = 0; i < 4; i++) {
+            try {
+                if (cube[i] != null) {
+                    if (Damage == true){
+                        System.out.println("debug mode");
+                    }
+                    int xHold = cube[i].getX();
+                    int yHold = cube[i].getY();
+                    int BLength = cube[i].getLength();
+                    int BHeight = cube[i].getHeight();
+                    draw.begin(ShapeRenderer.ShapeType.Filled);
+                    draw.rect(xHold, yHold, BLength, BHeight);
+                    draw.end();
+                }
+            }
+            catch (Exception e){
+                System.err.println("render error");
+            }
         }
     }
 }

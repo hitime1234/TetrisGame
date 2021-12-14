@@ -12,9 +12,9 @@ public class queue {
 
     public queue(ShapeRenderer Drawing,int speed) {
         Random rand = new Random();
-        for (int i = 0; i < 20; i++) {
+        for (int i = 0; i < 40; i++) {
             //rand.nextInt(0)
-            RNGblock hold = new RNGblock(Drawing, 4, speed);
+            RNGblock hold = new RNGblock(Drawing, 5, speed);
             basicBlock BUILT = hold.getHold();
             objects.add(BUILT);
         }

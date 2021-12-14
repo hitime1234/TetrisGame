@@ -1,7 +1,9 @@
 package Blocker;
 
 import com.mygdx.game.gameConstants;
+import org.graalvm.compiler.lir.LIRInstruction;
 
+import javax.sound.sampled.Line;
 import java.util.Vector;
 
 public class board {
@@ -15,6 +17,10 @@ public class board {
             for (int y=0;y<800;y++){
                 Boarder[y][x] = 0;
             }
+        }
+        //bug fix for the bottom of the screen
+        for (int x=0;x<800;x++){
+                Boarder[25][x] = 1;
         }
     }
 
@@ -47,19 +53,24 @@ public class board {
             DrawTypeRectangle(SomethingDumb);
     }
 
-    public int CheckClear(){
+    public int[] CheckClear(){
+        int array[] = new int[50];
         int lineCleared = 0;
         int count = 0;
-        for (int i=4;i<24;i++) {
-            if (Boarder[25][25*i] == 1){
-                count++;
+        int index = 0;
+        for (int y=1;y<30;y++) {
+            count = 0;
+            for (int i = 4; i < 24; i++) {
+                if (Boarder[26 * y][25 * i] == 1) {
+                    count++;
+                }
+            }
+            if (count == 20) {
+                array[index] = y*25;
+                index++;
             }
         }
-        System.out.println(count);
-        if (count == 20){
-            return 25;
-        }
-        return lineCleared;
+        return array;
     }
 
 
@@ -113,36 +124,54 @@ public class board {
 
     public void ClearRow(int line){
             for (int i=0;i<800;i++){
-                for (int x=0;x<=line*2+25;x++) {
+                for (int x=26;x<line+26;x++) {
                     Boarder[x][i] = 0;
                 }
             }
     }
 
+    public void DropBoard(int LineCleared,int newStart){
+        int[][] TempBoard = new int[800][800];
+        Output();
+        for (int i =(newStart); i<800-(newStart); i++){
+            for (int j=0;j<800;j++) {
+                    TempBoard[(i)][j] = Boarder[i+newStart][j];
+            }
+        }
+        for (int i=LineCleared;i<800;i++){
+                TempBoard[25][i] = 1;
+        }
+        Boarder = TempBoard;
+    }
+
+
+
+
     public void DrawTypeRectangle(basicBlock block){
         //bottom axis
         for (int x=0;x<block.getNumberOCubes();x++) {
             BasicCube[] holder = block.getCube();
-            int holdX = holder[x].getX();
-            int holdY = holder[x].getY();
-            int length = holder[x].getLength();
-            int height = holder[x].getLength();
-            int[][] vector = holder[x].getVector();
-            //x axis
+            if (holder[x] != null) {
+                int holdX = holder[x].getX();
+                int holdY = holder[x].getY();
+                int length = holder[x].getLength();
+                int height = holder[x].getLength();
+                int[][] vector = holder[x].getVector();
+                //x axis
 
 
-
-            for (int i = 0; i < length-1; i++) {
-                Boarder[vector[0][1]][vector[0][0] + i] = 1;
-                Boarder[vector[2][1]][vector[2][0] + i] = 1;
-            }
-
+                for (int i = 0; i < length - 1; i++) {
+                    Boarder[vector[0][1]][vector[0][0] + i] = 1;
+                    Boarder[vector[2][1]][vector[2][0] + i] = 1;
+                }
 
 
-            //y axis
-            for (int i = 0; i <= height; i++) {
-                Boarder[vector[0][1] + i][vector[0][0]] = 1;
-                Boarder[vector[1][1] + i][vector[1][0] - 1] = 1;
+                //y axis
+                for (int i = 0; i <= height; i++) {
+                    Boarder[vector[0][1] + i][vector[0][0]] = 1;
+                    Boarder[vector[1][1] + i][vector[1][0] - 1] = 1;
+                }
+
             }
         }
 

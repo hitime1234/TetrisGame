@@ -20,6 +20,7 @@ public class PracticeModeSelector implements Screen {
     private final CheckBox button3;
     private final TextField SpeedText;
     private int speedInt = 1;
+    private int random = 0;
 
 
     private Stage stage;
@@ -83,7 +84,7 @@ public class PracticeModeSelector implements Screen {
             @Override
             public boolean touchDown(InputEvent event,float x,float y,int pointer,int button) {
                 System.out.println("Starting Game");
-                game.setScreen(new TetrisTheGame(game,speedInt,ProFortniteGamer.RandomMode));
+                game.setScreen(new TetrisTheGame(game,speedInt,random));
                 dispose();
                 return true;
             }
@@ -154,18 +155,18 @@ public class PracticeModeSelector implements Screen {
         }
 
         if (button3.isChecked()){
-            ProFortniteGamer.setRandomMode(0);
+            random = (0);
 
         }
         else{
-            ProFortniteGamer.setRandomMode(1);
+            random = (1);
         }
 
         if (button2.isChecked()){
-            ProFortniteGamer.setRandomMode(1);
+            random = (1);
         }
         else{
-            ProFortniteGamer.setRandomMode(0);
+            random = (0);
         }
 
         //System.out.println(ProFortniteGamer.RandomMode);
