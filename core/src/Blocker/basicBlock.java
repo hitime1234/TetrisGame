@@ -12,10 +12,14 @@ public class basicBlock {
     int y;
     int speed;
     ShapeRenderer draw;
-    private final int[][] Vector;
-    int Shape = -1;
+    public int[][] Vector;
+    public int Shape = -1;
     private int length = 25;
     private int height = 25;
+    private int lowestX = 0;
+    private int lowestY = 0;
+    private int HighestX = 0;
+    private int HighestY = 0;
     public BasicCube[] cube;
     private Boolean Damage = false;
     //this copium --jackus
@@ -97,6 +101,7 @@ public class basicBlock {
 
 
 
+
     public basicBlock(ShapeRenderer draw, int x, int y, int speed, int[][] vector, int shape) {
         this.x = x;
         this.y = y;
@@ -106,6 +111,10 @@ public class basicBlock {
         this.Shape = shape;
 
         CubeCreator();
+    }
+
+    public basicBlock clone()  {
+       return new basicBlock(draw,x,y,speed,Vector,Shape);
     }
 
     public void flip() {
@@ -189,36 +198,69 @@ public class basicBlock {
                     }
                     break;
 
+                case 3:
+                    switch (i){
+                        case 0:
+                            double rad = Math.toRadians(cube[i].getAngler());
+                            NewX = oldX;
+                            cube[i].PassAngle();
+                            break;
+                        case 1:
+                            rad = Math.toRadians(cube[i].getAngler());
+                            NewX = oldX+(((int)( Math.round(tan(rad+((3*PI)/4)))))*25);
+                            cube[i].PassAngle();
+                            break;
+
+                        case 2:
+                            rad = Math.toRadians(cube[i].getAngler());
+                            NewX = oldX+(((int)( Math.round(tan(rad+((3*PI)/4)))))*-25*2);
+                            cube[i].PassAngle();
+                            break;
+
+                        case 3:
+                            rad = Math.toRadians(cube[i].getAngler());
+                            NewX = oldX+(((int)( Math.round(tan(rad+((3*PI)/4)))))*-25);
+                            cube[i].PassAngle();
+                            break;
 
 
-            case 4:
-                switch (i){
-                    case 0:
-                        double rad = Math.toRadians(cube[i].getAngler());
-                        NewX = oldX+(((int)( Math.round(cos((rad+1)))))*25);
-                        cube[i].PassAngle();
-                        break;
-
-                    case 1:
-                        NewX = oldX;
-                        cube[i].PassAngle();
-                        break;
-                    case 2:
-
-                        rad = Math.toRadians(cube[i].getAngler());
-                        NewX = oldX+(((int)( Math.round(sin(rad) +cos((rad)))))*25);
-                        cube[i].PassAngle();
-                        break;
+                        default:
+                            NewX = oldX;
+                            break;
+                    }
+                    break;
 
 
-                    case 3:
-                        rad = Math.toRadians(cube[i].getAngler());
-                        NewX = oldX+(((int)( Math.round(cos((rad+1)))))*25*2);
-                        cube[i].PassAngle();
-                        break;
-                    default:
-                        NewX =oldX;
-                        break;
+
+            //diag
+                case 4:
+                    switch (i){
+                        case 0:
+                            double rad = Math.toRadians(cube[i].getAngler());
+                            NewX = oldX+(((int)( Math.round(tan(rad+((3*PI)/4)))))*-25);
+                            cube[i].PassAngle();
+                            break;
+
+                        case 1:
+                            rad = Math.toRadians(cube[i].getAngler());
+                            NewX = oldX+(((int)( Math.round(tan(rad+((3*PI)/4)))))*-25);
+                            cube[i].PassAngle();
+                            break;
+                        case 2:
+                            rad = Math.toRadians(cube[i].getAngler());
+                            NewX = oldX+(((int)( Math.round(tan(rad+((3*PI)/4)))))*-25);
+                            cube[i].PassAngle();
+                            break;
+
+
+                        case 3:
+                            rad = Math.toRadians(cube[i].getAngler());
+                            NewX = oldX+(((int)( Math.round(tan(rad+((3*PI)/4)))))*25);
+                            cube[i].PassAngle();
+                            break;
+                        default:
+                            NewX =oldX;
+                            break;
                 }
                 break;
 
@@ -258,6 +300,38 @@ public class basicBlock {
                     }
                     break;
 
+            //diag Left
+            case 6:
+                switch (i){
+                    case 0:
+                        double rad = Math.toRadians(cube[i].getAngler());
+                        NewX = oldX;
+                        cube[i].PassAngle();
+                        break;
+
+                    case 1:
+                        rad = Math.toRadians(cube[i].getAngler());
+                        NewX = oldX;
+                        cube[i].PassAngle();
+                        break;
+                    case 2:
+                        rad = Math.toRadians(cube[i].getAngler());
+                        NewX = oldX;
+                        cube[i].PassAngle();
+                        break;
+
+
+                    case 3:
+                        rad = Math.toRadians(cube[i].getAngler());
+                        NewX = oldX+(((int)( Math.round(tan(rad+((3*PI)/4)))))*25*-2);
+                        cube[i].PassAngle();
+                        break;
+                    default:
+                        NewX =oldX;
+                        break;
+                }
+                break;
+
 
 
 
@@ -293,12 +367,15 @@ public class basicBlock {
                         break;
                 }
                 break;
+
+
+
+
             case 2:
                 switch (i){
                     case 0:
                         double rad = Math.toRadians(cube[i].getAngler());
                         NewY = oldY+(((int)( Math.round(cos((rad+1)))))*25);
-
                         break;
                     case 1:
                         NewY = oldY;
@@ -316,24 +393,50 @@ public class basicBlock {
                         break;
                 }
                 break;
+            case 3:
+                switch (i){
+                    case 0:
+                        double rad = Math.toRadians(cube[i].getAngler());
+                        NewY = oldY;
+                        break;
+                    case 1:
+                        rad = Math.toRadians(cube[i].getAngler());
+                        NewY = oldY+(((int)( Math.round(tan(rad+((3*PI)/4)-PI/2))))*-25);
+                        break;
 
+                    case 2:
+                        rad = Math.toRadians(cube[i].getAngler());
+                        NewY = oldY+(((int)( Math.round(tan(rad+((3*PI)/4)-PI/2))))*25*2);
+                        break;
+
+                    case 3:
+                        rad = Math.toRadians(cube[i].getAngler());
+                        NewY = oldY+(((int)( Math.round(tan(rad+((3*PI)/4)-PI/2))))*25);
+                        break;
+
+
+                    default:
+                        NewY = oldY;
+                        break;
+                }
+                break;
             case 4:
                 switch (i){
                     case 0:
                         double rad = Math.toRadians(cube[i].getAngler());
-                        NewY = oldY+(((int)( Math.round(1/(sin(rad+PI/2)+cos(rad+PI/2))))*25));
-
+                        NewY = oldY+(((int)( Math.round(tan(rad+((3*PI)/4)))))*-25);
                         break;
                     case 1:
-                        NewY = oldY;
+                        rad = Math.toRadians(cube[i].getAngler());
+                        NewY = oldY+(((int)( Math.round(tan(rad+((3*PI)/4)-PI/2))))*-25);
                         break;
                     case 2:
-                        rad = Math.toRadians(cube[2].getAngler());
-                        NewY = oldY+(((int)Math.round(1/(sin(rad)+cos(rad))))*25);
+                        rad = Math.toRadians(cube[i].getAngler());
+                        NewY = oldY+(((int)( Math.round(tan(rad+((3*PI)/4)))))*-25);
                         break;
                     case 3:
                         rad = Math.toRadians(cube[i].getAngler());
-                        NewY = oldY+(((int)( Math.round(cos((rad+1)))))*25*2);
+                        NewY = oldY+(((int)( Math.round(tan(rad+((3*PI)/4)-PI/2))))*25);
                         break;
                     default:
                         NewY =oldY;
@@ -368,6 +471,29 @@ public class basicBlock {
                 }
                 break;
 
+            case 6:
+                switch (i){
+                    case 0:
+                        double rad = Math.toRadians(cube[i].getAngler());
+                        NewY = oldY;
+                        break;
+                    case 1:
+                        rad = Math.toRadians(cube[i].getAngler());
+                        NewY = oldY+(((int)( Math.round(tan(rad+((3*PI)/4)-PI/2))))*-25);
+                        break;
+                    case 2:
+                        rad = Math.toRadians(cube[i].getAngler());
+                        NewY = oldY;
+                        break;
+                    case 3:
+                        rad = Math.toRadians(cube[i].getAngler());
+                        NewY = oldY+(((int)( Math.round(tan(rad+((3*PI)/4)-PI/2))))*-25);
+                        break;
+                    default:
+                        NewY =oldY;
+                        break;
+                }
+                break;
 
 
         }
@@ -389,6 +515,7 @@ public class basicBlock {
 
     public void setX(int x) {
         this.x = x;
+        CubeCreator();
     }
 
     public void setY(int y) {
@@ -409,8 +536,16 @@ public class basicBlock {
     }
 
     public void moveX(int x) {
+        this.x = this.x - x;
         for (int i = 0; i < getNumberOCubes(); i++) {
             cube[i].setX(cube[i].getX() + x);
+        }
+    }
+
+    public void moveY(int x) {
+        y = y - x;
+        for (int i = 0; i < getNumberOCubes(); i++) {
+            cube[i].setY(cube[i].getY() - x);
         }
     }
 
@@ -507,6 +642,8 @@ public class basicBlock {
         this.speed = speed;
     }
 
+
+
     public void pass() {
         y = y - 25;
         for (int i = 0; i < getNumberOCubes(); i++) {
@@ -521,10 +658,15 @@ public class basicBlock {
                     if (Damage == true){
                         System.out.println("debug mode");
                     }
+
                     int xHold = cube[i].getX();
                     int yHold = cube[i].getY();
                     int BLength = cube[i].getLength();
                     int BHeight = cube[i].getHeight();
+                    BHeight = (BHeight / 25)*30;
+                    BLength = (BLength / 25)*30;
+                    yHold = (yHold / 25)*30;
+                    xHold = (xHold/25)*30;
                     draw.begin(ShapeRenderer.ShapeType.Filled);
                     draw.rect(xHold, yHold, BLength, BHeight);
                     draw.end();
@@ -534,5 +676,47 @@ public class basicBlock {
                 System.err.println("render error");
             }
         }
+    }
+
+    public int getXHighest() {
+        int hold = cube[0].getX();
+        for (int i=0;i<getNumberOCubes();i++) {
+            if (hold < cube[i].getX()){
+                hold =cube[i].getX();
+                HighestX = cube[i].getX();
+            }
+        }
+        return hold;
+    }
+    public int getXLowest() {
+        int hold = cube[0].getX();
+        for (int i=0;i<getNumberOCubes();i++) {
+            if (hold > cube[i].getX()){
+                hold =cube[i].getX();
+                lowestX = cube[i].getX();
+            }
+        }
+        return hold;
+    }
+    public int getYHighest() {
+        int hold = cube[0].getY();
+        for (int i=0;i<getNumberOCubes();i++) {
+            if (hold < cube[i].getY()){
+                hold =cube[i].getY();
+                HighestY = cube[i].getY();
+            }
+        }
+        return hold;
+    }
+
+    public int getYLowest() {
+        int hold = cube[0].getY();
+        for (int i=0;i<getNumberOCubes();i++) {
+            if (hold > cube[i].getY()){
+                hold =cube[i].getY();
+                lowestY = cube[i].getY();
+            }
+        }
+        return hold;
     }
 }

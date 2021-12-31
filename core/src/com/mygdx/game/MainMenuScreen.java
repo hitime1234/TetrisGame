@@ -4,13 +4,9 @@ import Handling.CSVManager;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -19,9 +15,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
-import com.badlogic.gdx.utils.viewport.ScreenViewport;
-import com.mygdx.game.MyGdxGame;
-import org.graalvm.compiler.debug.CSVUtil;
 
 public class MainMenuScreen implements Screen {
     final MyGdxGame game;
@@ -47,7 +40,9 @@ public class MainMenuScreen implements Screen {
     }
 
     public MainMenuScreen(final MyGdxGame game) {
+        Gdx.graphics.setWindowedMode(800, 480);
         CreateSessionFile();
+        //Get screens for future use
         stage = new Stage(new ExtendViewport(800, 480, 1080, 1920));
         Gdx.input.setInputProcessor(stage);
         this.game = game;
@@ -59,6 +54,7 @@ public class MainMenuScreen implements Screen {
         Button button2 = new TextButton("play",skin);
         Button button3 = new TextButton("multiplayer",skin);
         Button button4 = new TextButton("settings",skin);
+        Button button5 = new TextButton("exit",skin);
 
         button2.setSize(gameConstants.col_width*2,gameConstants.col_height/2);
         button2.setPosition(gameConstants.col_width*2+95,Gdx.graphics.getHeight()-(gameConstants.col_width*1+80));
@@ -75,11 +71,16 @@ public class MainMenuScreen implements Screen {
         button4.setTransform(true);
         button4.scaleBy(0.1f);
 
+        button5.setSize(gameConstants.col_width*2,gameConstants.col_height/2);
+        button5.setPosition(gameConstants.col_width*2+95,Gdx.graphics.getHeight()-(gameConstants.col_width*4-40));
+        button5.setTransform(true);
+        button5.scaleBy(0.1f);
+
         button2.addListener(new InputListener(){
             @Override
             public boolean touchDown(InputEvent event,float x,float y,int pointer,int button){
                 System.out.println("PRESSED");
-                game.setScreen(new PracticeModeSelector(game));
+                ((Game) Gdx.app.getApplicationListener()).setScreen(new PracticeModeSelector((MyGdxGame) game));
                 return true;
             }
         });
@@ -87,7 +88,7 @@ public class MainMenuScreen implements Screen {
             @Override
             public boolean touchDown(InputEvent event,float x,float y,int pointer,int button) {
                 System.out.println("button 2");
-                game.setScreen(new MultiSelector(game));
+                game.setScreen(new MultiSelector((MyGdxGame) game));
                 //game.setScreen(new ());
                 return true;
             }
@@ -96,14 +97,22 @@ public class MainMenuScreen implements Screen {
             @Override
             public boolean touchDown(InputEvent event,float x,float y,int pointer,int button) {
                 System.out.println("button 3");
-                game.setScreen(new GameScreen(game));
-                dispose();
+                game.setScreen(new GameScreen((MyGdxGame) game));
+                return true;
+            }
+        });
+        button5.addListener(new InputListener(){
+            @Override
+            public boolean touchDown(InputEvent event,float x,float y,int pointer,int button) {
+                System.out.println("Shutting down");
+                Gdx.app.exit();
                 return true;
             }
         });
         stage.addActor(button2);
         stage.addActor(button3);
         stage.addActor(button4);
+        stage.addActor(button5);
     }       
     @Override
     public void show() {
@@ -112,13 +121,12 @@ public class MainMenuScreen implements Screen {
 
     @Override
     public void render(float delta) {
+        stage.act(delta);
         ScreenUtils.clear(0, 0, 0.2f, 1);
         camera.update();
         game.batch.setProjectionMatrix(camera.combined);
 
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        stage.act(delta);
-        stage.draw();
 
         game.batch.begin();
         game.font.draw(game.batch, "Welcome to Tetris VS", gameConstants.centerX-60, gameConstants.screenHeight-40);
@@ -132,6 +140,7 @@ public class MainMenuScreen implements Screen {
             game.setScreen(new GameScreen(game));
             dispose();
         }
+        stage.draw();
     }
 
     @Override
@@ -157,6 +166,7 @@ public class MainMenuScreen implements Screen {
 
     @Override
     public void dispose() {
+        Gdx.app.log("note: ", "dispose called");
         stage.dispose();
         game.batch.dispose();
     }

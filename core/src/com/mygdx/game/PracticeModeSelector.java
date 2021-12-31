@@ -71,7 +71,6 @@ public class PracticeModeSelector implements Screen {
             public boolean touchDown(InputEvent event,float x,float y,int pointer,int button) {
                 System.out.println("button 3");
                 game.setScreen(new MainMenuScreen(game));
-                dispose();
                 return true;
             }
         });
@@ -85,7 +84,6 @@ public class PracticeModeSelector implements Screen {
             public boolean touchDown(InputEvent event,float x,float y,int pointer,int button) {
                 System.out.println("Starting Game");
                 game.setScreen(new TetrisTheGame(game,speedInt,random));
-                dispose();
                 return true;
             }
         });

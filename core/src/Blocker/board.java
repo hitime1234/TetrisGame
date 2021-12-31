@@ -1,5 +1,6 @@
 package Blocker;
 
+import com.mygdx.game.TetrisTheGame;
 import com.mygdx.game.gameConstants;
 import org.graalvm.compiler.lir.LIRInstruction;
 
@@ -9,7 +10,7 @@ import java.util.Vector;
 public class board {
     public int[][] Boarder;
     public board(){
-        Boarder = new int[800][800];
+        Boarder = new int[2000][2000];
         BuildArray();
     }
     public void BuildArray(){
@@ -25,9 +26,9 @@ public class board {
     }
 
     public void Output(){
-        for (int x=0;x<Boarder.length;x++){
+        for (int x=0;x<600;x++){
             System.out.print("[");
-            for (int y=0;y<Boarder.length;y++){
+            for (int y=20;y<800;y++){
                 System.out.print(Boarder[y][x] + ",");
             }
             System.out.print("]");
@@ -60,15 +61,40 @@ public class board {
         int index = 0;
         for (int y=1;y<30;y++) {
             count = 0;
-            for (int i = 4; i < 24; i++) {
+            for (int i = 10; i < 30; i++) {
                 if (Boarder[26 * y][25 * i] == 1) {
                     count++;
                 }
             }
-            if (count == 20) {
+            if (count == 10) {
                 array[index] = y*25;
                 index++;
             }
+        }
+        return array;
+    }
+
+
+    public int[] CheckClearBlanks(){
+        int array[] = new int[50];
+        int lineCleared = 0;
+        int count = 0;
+        int index = 0;
+        int previous = 0;
+        for (int y=1;y<30;y++) {
+            count = 0;
+            for (int i = 10; i < 20; i++) {
+                if (Boarder[26 * y][25 * i] == 0) {
+                    count++;
+                }
+            }
+
+
+            if (previous == 10 && count < 10) {
+                array[index] = y*25;
+                index++;
+            }
+            previous = count;
         }
         return array;
     }
@@ -112,37 +138,72 @@ public class board {
                 }
             }
 
+            //come back to this part of the code because false detection were happening
 
+            /**
             if (hold1 && hold == false) {
-                SomethingDumb.setX(SomethingDumb.getX() - 25);
+                SomethingDumb.setY(SomethingDumb.getY() - 25);
             } else if (hold2 && hold == false) {
-                SomethingDumb.setX(SomethingDumb.getX() + 25);
+                SomethingDumb.setY(SomethingDumb.getY() + 25);
+            }
+             */
+            //and casuing rebounces inside block
+            //no IDEA what this is supposed to do
+        }
+        return hold;
+    }
+
+    public boolean CheckNoEdit(basicBlock SomethingDumb){
+        //bottom axis
+        int Type = SomethingDumb.Shape;
+        boolean hold = false;
+        boolean hold1 = false;
+        boolean hold2 = false;
+        BasicCube[] holder = SomethingDumb.getCube();
+        for (int x=0;x<SomethingDumb.getNumberOCubes();x++) {
+
+            int holdX = holder[x].getX();
+            int holdY = holder[x].getY();
+            int length = holder[x].getLength();
+            int height = holder[x].getLength();
+            int[][] vector = holder[x].getVector();
+
+
+
+            //x axis
+
+            for (int i = 0; i < length; i++) {
+                if (Boarder[vector[0][1]][vector[0][0] + i] == 1) {
+                    hold1 = true;
+                } else if (Boarder[vector[2][1]][vector[2][0] + i] == 1) {
+                    hold2 = true;
+                }
+            }
+
+
+            //y axis
+            for (int i = 0; i < height; i++) {
+                if (Boarder[vector[0][1] + i][vector[0][0] + 1] == 1) {
+                    hold = true;
+                }
+                if (Boarder[vector[1][1] + i][vector[1][0] - 1] == 1) {
+                    hold = true;
+                }
             }
         }
         return hold;
     }
 
-    public void ClearRow(int line){
+
+
+    public void ClearRow(int line,int newStart){
             for (int i=0;i<800;i++){
-                for (int x=26;x<line+26;x++) {
+                for (int x=newStart;x<((line*25)+newStart);x++) {
                     Boarder[x][i] = 0;
                 }
             }
     }
 
-    public void DropBoard(int LineCleared,int newStart){
-        int[][] TempBoard = new int[800][800];
-        Output();
-        for (int i =(newStart); i<800-(newStart); i++){
-            for (int j=0;j<800;j++) {
-                    TempBoard[(i)][j] = Boarder[i+newStart][j];
-            }
-        }
-        for (int i=LineCleared;i<800;i++){
-                TempBoard[25][i] = 1;
-        }
-        Boarder = TempBoard;
-    }
 
 
 

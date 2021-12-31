@@ -41,6 +41,7 @@ public class BasicCube {
         return Vector;
     }
 
+
     public int getLength() {
         return length;
     }

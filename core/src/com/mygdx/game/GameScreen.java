@@ -18,8 +18,10 @@ public class GameScreen implements Screen {
     private Rectangle bucket;
     private OrthographicCamera camera;
     private Texture bucketImage;
+    private MyGdxGame gamer;
 
     public GameScreen(MyGdxGame game) {
+        gamer =game;
         camera = new OrthographicCamera();
         bucketImage = new Texture(Gdx.files.internal("bucket.png"));
         camera.setToOrtho(false, 800, 480);
@@ -47,8 +49,7 @@ public class GameScreen implements Screen {
             camera.unproject(touchPos);
             bucket.x = touchPos.x - 64 / 2;
         }
-        if(Gdx.input.isKeyPressed(Input.Keys.LEFT)) bucket.x -= 200 * Gdx.graphics.getDeltaTime();
-        if(Gdx.input.isKeyPressed(Input.Keys.RIGHT)) bucket.x += 200 * Gdx.graphics.getDeltaTime();
+
         if(bucket.x < 0) bucket.x = 0;
         if(bucket.x > 800 - 64) bucket.x = 800 - 64;
         ScreenUtils.clear(0, 0, 0.2f, 1);
