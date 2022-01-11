@@ -29,6 +29,7 @@ public class PracticeModeSelector implements Screen {
     OrthographicCamera camera;
 
     public PracticeModeSelector(final MyGdxGame game) {
+        Gdx.graphics.setWindowedMode(800, 480);
         stage = new Stage(new ExtendViewport(800, 480, 1080, 1920));
         Gdx.input.setInputProcessor(stage);
         this.game = game;

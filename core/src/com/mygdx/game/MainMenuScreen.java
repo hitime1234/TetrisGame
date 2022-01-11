@@ -27,7 +27,7 @@ public class MainMenuScreen implements Screen {
     OrthographicCamera camera;
 
     public void CreateSessionFile(){
-        File = new CSVManager("TESTROOT.csv",0);
+        File = new CSVManager("TESTROOT.csv",1);
         //file Layout
         //version index 0
         //file location index 1
@@ -36,7 +36,8 @@ public class MainMenuScreen implements Screen {
         //Time 4
         //speed 5
 
-        //CSVManager ReadFile = new CSVManager("TESTROOT.csv", 1);
+        CSVManager ReadFile = new CSVManager("TESTROOT.csv", 1);
+        System.out.println(ReadFile.getRIGHTKey());
     }
 
     public MainMenuScreen(final MyGdxGame game) {
@@ -50,7 +51,6 @@ public class MainMenuScreen implements Screen {
         camera.setToOrtho(false, 800, 480);
         font = new BitmapFont();
         Skin skin = new Skin(Gdx.files.internal(gameConstants.skin));
-
         Button button2 = new TextButton("play",skin);
         Button button3 = new TextButton("multiplayer",skin);
         Button button4 = new TextButton("settings",skin);
@@ -97,7 +97,7 @@ public class MainMenuScreen implements Screen {
             @Override
             public boolean touchDown(InputEvent event,float x,float y,int pointer,int button) {
                 System.out.println("button 3");
-                game.setScreen(new GameScreen((MyGdxGame) game));
+                ((Game) Gdx.app.getApplicationListener()).setScreen(new Settings((MyGdxGame) game));
                 return true;
             }
         });
