@@ -1,10 +1,7 @@
 package com.mygdx.game;
 
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
-import com.badlogic.gdx.InputMultiplexer;
-import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -16,6 +13,12 @@ import Handling.*;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 
+import java.io.*;
+import java.net.Socket;
+import java.util.Random;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 public class Settings implements Screen {
     final MyGdxGame game;
     private final BitmapFont font;
@@ -26,6 +29,10 @@ public class Settings implements Screen {
     private final TextField LEFT;
     private final TextField Flip;
     private final TextField down;
+    private final Networking Client1;
+    private final Networking Client2;
+    private final ExecutorService threadPool;
+    private int id;
     private CSVManager file;
 
     private int KeyCode = 0;
@@ -46,13 +53,22 @@ public class Settings implements Screen {
 
 
 
-    OrthographicCamera camera;
 
-    public Settings(final MyGdxGame game) {
+    OrthographicCamera camera;
+    private String PholdData;
+    private String holdData;
+
+    public Settings(final MyGdxGame game)  {
         stage = new Stage(new ExtendViewport(800, 480, 1080, 1920));
         Gdx.input.setInputProcessor(stage);
         file = new CSVManager("TESTROOT.csv",1);
 
+
+        Client1 = new Networking("127.0.0.1",25565);
+        Client2 = new Networking("127.0.0.1",25565);
+        threadPool = Executors.newCachedThreadPool();
+        threadPool.submit(Client1);
+        threadPool.submit(Client2);
 
 
         this.game = game;
@@ -99,6 +115,7 @@ public class Settings implements Screen {
                 keyLeft = file.getLEFT();
                 keyFlip = file.getUP();
                 return true;
+
             }
         });
 
@@ -111,6 +128,8 @@ public class Settings implements Screen {
             @Override
             public boolean touchDown(InputEvent event,float x,float y,int pointer,int button) {
                 System.out.println("returning home");
+                System.out.println("closing connection");
+                threadPool.shutdown();
                 game.setScreen(new MainMenuScreen(game));
                 return true;
             }
@@ -344,6 +363,8 @@ public class Settings implements Screen {
         stage.addActor(down);
         stage.addActor(HardDrop);
         stage.addActor(Nuke);
+        id = 0;
+
     }
     @Override
     public void show() {
@@ -375,6 +396,22 @@ public class Settings implements Screen {
         HardDrop.setText(Input.Keys.toString(keyHardDrop));
         Flip.setText(Input.Keys.toString(keyFlip));
         Hold.setText(Input.Keys.toString(keyHold));
+
+
+        /*
+        Random rand = new Random();
+        PholdData = holdData;
+        holdData = String.valueOf(rand.nextInt(100000));
+        Client1.sendOFF(holdData);
+        String hold = Client2.GetRecv();
+        if (hold.equals(PholdData)){
+            System.out.println("goodJob" +id);
+            id++;
+        }
+
+         */
+
+
 
         switch (speedInt){
             case 1:
@@ -409,7 +446,7 @@ public class Settings implements Screen {
         game.font.draw(game.batch, "KeyBindings", 120, gameConstants.screenHeight-40);
         game.font.draw(game.batch, "move block right", 10, 400);
         game.font.draw(game.batch, "move block left", 10, 330);
-        game.font.draw(game.batch, "move block up", 10, 260);
+        game.font.draw(game.batch, "Flip", 10, 260);
         game.font.draw(game.batch, "hold block", 10, 190);
         game.font.draw(game.batch, "block soft drop", 10, 120);
         game.font.draw(game.batch, "block hard drop", 10, 50);

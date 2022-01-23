@@ -3,28 +3,108 @@ package Blocker;
 
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
+import java.io.UnsupportedEncodingException;
 import java.lang.*;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
+import java.util.ArrayList;
 
 import static java.lang.Math.*;
 
 public class basicBlock {
-    int x;
-    int y;
-    int speed;
-    ShapeRenderer draw;
+    public int x;
+    public int y;
+    public int speed;
+    public ShapeRenderer draw;
     public int[][] Vector;
     public int Shape = -1;
     private int length = 25;
     private int height = 25;
-    private int lowestX = 0;
-    private int lowestY = 0;
-    private int HighestX = 0;
-    private int HighestY = 0;
     public BasicCube[] cube;
     private Boolean Damage = false;
     //this copium --jackus
     //fix your code god dammit
 
+
+
+    public String WriteToCsv(int[][] myArray) throws UnsupportedEncodingException {
+        StringBuilder res = new StringBuilder();
+        for (int[] ints : myArray) {
+            for (int anInt : ints) res.append(URLEncoder.encode(String.valueOf(anInt), "UTF-8")).append(",");
+            res.append("\n");
+        }
+        return res.toString();
+    }
+
+
+    public int[][] read(String res) throws UnsupportedEncodingException {
+        String[] rows = res.split("\n");
+        int[][] myArray = new int[rows.length][];
+        for (int iRow = 0; iRow < rows.length; iRow++) {
+            String[] cols = rows[iRow].split(",");
+            myArray[iRow] = new int[cols.length];
+            for (int iCol = 0; iCol < cols.length; iCol++)
+                myArray[iRow][iCol] = Integer.parseInt(URLDecoder.decode(cols[iCol], "UTF-8"));
+        }
+        return myArray;
+    }
+
+
+
+
+    public ArrayList CloneData() throws UnsupportedEncodingException {
+        ArrayList<String> data = new ArrayList<>();
+        data.add(WriteToCsv(Vector));
+        data.add(String.valueOf(Shape));
+        data.add(String.valueOf(length));
+        data.add(String.valueOf(height));
+        data.add(Boolean.toString(Damage));
+        return data;
+    }
+
+
+
+    public void SetValues(int[][] Vector,int shape,int length,int height,boolean Damage){
+        this.Vector = Vector;
+        this.Shape = shape;
+        this.length = length;
+        this.height = height;
+        this.Damage = Damage;
+    }
+
+    public boolean CheckGreaterX(int x){
+        boolean result = false;
+        for (int i=0;i<getNumberOCubes();i++) {
+            if (cube[i].getX() >= x){
+                result = true;
+            }
+        }
+        return result;
+    }
+
+    public boolean CheckLessX(int x){
+        boolean result = false;
+        for (int i=0;i<getNumberOCubes();i++) {
+            if (cube[i].getX() <= x){
+                result = true;
+            }
+        }
+        return result;
+    }
+
+    public int HeightOfBlock(){
+        int TempHigh = cube[0].getY();
+        int TempLow = cube[0].getY();
+        for (int i=0;i<getNumberOCubes();i++){
+            if (TempHigh <= cube[i].getY()){
+                TempHigh = cube[i].getY();
+            }
+            if (TempLow >= cube[i].getY()){
+                TempLow = cube[i].getY();
+            }
+        }
+        return  TempHigh - TempLow;
+    }
 
     private void CubeCreator(){
         switch (Shape) {
@@ -91,6 +171,19 @@ public class basicBlock {
                 cube[2] = new BasicCube(x-25,y+25,25,25,FindVector(x+25,y+25,25,25));
                 cube[3] = new BasicCube(x-50,y+25,25,25,FindVector(x+50,y+25,25,25));
                 break;
+            //sent line piece
+            case 7:
+                cube = new BasicCube[9];
+                cube[0] = new BasicCube(x,y,25,25,FindVector(x,y,25,25));
+                cube[1] = new BasicCube(x+25,y,25,25,FindVector(x+25,y,25,25));
+                cube[2] = new BasicCube(x+50,y,25,25,FindVector(x+50,y,25,25));
+                cube[3] = new BasicCube(x+75,y,25,25,FindVector(x+75,y,25,25));
+                cube[4] = new BasicCube(x+100,y,25,25,FindVector(x+100,y,25,25));
+                cube[5] = new BasicCube(x+150,y,25,25,FindVector(x+150,y,25,25));
+                cube[6] = new BasicCube(x+175,y,25,25,FindVector(x+175,y,25,25));
+                cube[7] = new BasicCube(x+200,y,25,25,FindVector(x+200,y,25,25));
+                cube[8] = new BasicCube(x+225,y,25,25,FindVector(x+225,y,25,25));
+                break;
 
             default:
                 length = 0;
@@ -98,6 +191,7 @@ public class basicBlock {
                 break;
         }
     }
+
 
 
 
@@ -116,6 +210,8 @@ public class basicBlock {
     public basicBlock clone()  {
        return new basicBlock(draw,x,y,speed,Vector,Shape);
     }
+
+
 
     public void flip() {
         if (Shape != -1) {
@@ -535,22 +631,35 @@ public class basicBlock {
         }
     }
 
+
+
     public void moveX(int x) {
         this.x = this.x - x;
         for (int i = 0; i < getNumberOCubes(); i++) {
-            cube[i].setX(cube[i].getX() + x);
+            if (cube[i] != null) {
+                cube[i].setX(cube[i].getX() + x);
+            }
         }
     }
 
     public void moveY(int x) {
         y = y - x;
         for (int i = 0; i < getNumberOCubes(); i++) {
-            cube[i].setY(cube[i].getY() - x);
+            if (cube[i] != null) {
+                cube[i].setY(cube[i].getY() - x);
+            }
         }
     }
 
     public int getX() {
         return cube[1].getX();
+    }
+
+    public int RealX(){
+        return this.x;
+    }
+    public int RealY(){
+        return this.y;
     }
 
     public int getY() {
@@ -652,13 +761,12 @@ public class basicBlock {
     }
 
     public void draw() {
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < cube.length; i++) {
             try {
                 if (cube[i] != null) {
                     if (Damage == true){
                         System.out.println("debug mode");
                     }
-
                     int xHold = cube[i].getX();
                     int yHold = cube[i].getY();
                     int BLength = cube[i].getLength();
@@ -683,7 +791,7 @@ public class basicBlock {
         for (int i=0;i<getNumberOCubes();i++) {
             if (hold < cube[i].getX()){
                 hold =cube[i].getX();
-                HighestX = cube[i].getX();
+                int highestX = cube[i].getX();
             }
         }
         return hold;
@@ -693,7 +801,7 @@ public class basicBlock {
         for (int i=0;i<getNumberOCubes();i++) {
             if (hold > cube[i].getX()){
                 hold =cube[i].getX();
-                lowestX = cube[i].getX();
+                int lowestX = cube[i].getX();
             }
         }
         return hold;
@@ -703,7 +811,7 @@ public class basicBlock {
         for (int i=0;i<getNumberOCubes();i++) {
             if (hold < cube[i].getY()){
                 hold =cube[i].getY();
-                HighestY = cube[i].getY();
+                int highestY = cube[i].getY();
             }
         }
         return hold;
@@ -714,7 +822,7 @@ public class basicBlock {
         for (int i=0;i<getNumberOCubes();i++) {
             if (hold > cube[i].getY()){
                 hold =cube[i].getY();
-                lowestY = cube[i].getY();
+                int lowestY = cube[i].getY();
             }
         }
         return hold;

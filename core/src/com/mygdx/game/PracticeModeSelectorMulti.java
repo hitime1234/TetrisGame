@@ -1,5 +1,6 @@
 package com.mygdx.game;
 
+import Handling.Networking;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
@@ -12,24 +13,29 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 
-public class PracticeModeSelector implements Screen {
+
+public class PracticeModeSelectorMulti implements Screen {
     final MyGdxGame game;
     private final BitmapFont font;
     private final GameScreen2 ProFortniteGamer;
     private final CheckBox button2;
     private final CheckBox button3;
     private final TextField SpeedText;
+    private final TextField ServerIp;
+    private final TextField Port;
     private int speedInt = 1;
     private int random = 0;
+    private String Connection = "waiting to connect";
 
 
     private Stage stage;
 
 
     OrthographicCamera camera;
+    private Networking Client = null;
 
-    public PracticeModeSelector(final MyGdxGame game) {
-        Gdx.graphics.setWindowedMode(800, 480);
+    public PracticeModeSelectorMulti(final MyGdxGame game) {
+        Gdx.graphics.setWindowedMode(950, 580);
         stage = new Stage(new ExtendViewport(800, 480, 1080, 1920));
         Gdx.input.setInputProcessor(stage);
         this.game = game;
@@ -41,14 +47,15 @@ public class PracticeModeSelector implements Screen {
 
         //final Button button2 = new TextButton("play",skin);
         //converted to a CheckBox
-        button2  = new CheckBox("Standard Random Mode",skin);
+        button2  = new CheckBox("Pure random Mode",skin);
 
-        button3 = new CheckBox("Pure random Mode",skin);
+        button3 = new CheckBox("Standard Random Mode",skin);
 
         Button button4 = new TextButton("Go Back",skin);
         Button button5 = new TextButton("Start Game",skin);
         Button button6 = new TextButton("+",skin);
         Button button7 = new TextButton("-",skin);
+        Button button8 = new TextButton("connect",skin);
 
 
         button2.getLabelCell().padLeft(7);
@@ -84,7 +91,7 @@ public class PracticeModeSelector implements Screen {
             @Override
             public boolean touchDown(InputEvent event,float x,float y,int pointer,int button) {
                 System.out.println("Starting Game");
-                game.setScreen(new TetrisTheGame(game,speedInt,random));
+                game.setScreen(new MultiTetrisTheGame(game,speedInt,random,Client));
                 return true;
             }
         });
@@ -120,12 +127,44 @@ public class PracticeModeSelector implements Screen {
         });
 
 
+        button8.setSize(gameConstants.col_width*2,gameConstants.col_height/3);
+        button8.setPosition(0,300);
+        button8.setTransform(true);
+        button8.scaleBy(0.1f);
+        button8.addListener(new InputListener(){
+            @Override
+            public boolean touchDown(InputEvent event,float x,float y,int pointer,int button) {
+                Client = new Networking(ServerIp.getText(),Integer.valueOf(Port.getText()));
+                if (Client.GetRecv().equals("ERROR")){
+                    Connection = "Failed to connect to server";
+                    Client = null;
+                }
+                else{
+                    Connection = "Successfully connected";
+                }
+                return true;
+            }
+        });
+
+
         button3.setChecked(true);
 
         SpeedText = new TextField(Integer.toString(speedInt),skin);
         SpeedText.setSize(gameConstants.col_width*3/10,gameConstants.col_height/4);
         SpeedText.setPosition(gameConstants.col_width*39/10,Gdx.graphics.getHeight()-(gameConstants.col_width*3-20));
         SpeedText.scaleBy(0.2f);
+
+
+        ServerIp = new TextField("127.0.0.1",skin);
+        ServerIp.setSize(gameConstants.col_width*3/2,gameConstants.col_height/4);
+        ServerIp.setPosition(50,400);
+        ServerIp.scaleBy(0.3f);
+
+        Port = new TextField("25565",skin);
+        Port.setSize(gameConstants.col_width*3/3,gameConstants.col_height/4);
+        Port.setPosition(50,350);
+        Port.scaleBy(0.3f);
+
 
         stage.addActor(button2);
         stage.addActor(button3);
@@ -134,6 +173,9 @@ public class PracticeModeSelector implements Screen {
         stage.addActor(button6);
         stage.addActor(button7);
         stage.addActor(SpeedText);
+        stage.addActor(ServerIp);
+        stage.addActor(Port);
+        stage.addActor(button8);
     }       
     @Override
     public void show() {
@@ -180,8 +222,14 @@ public class PracticeModeSelector implements Screen {
         stage.draw();
 
         game.batch.begin();
-        game.font.draw(game.batch, "Welcome to Tetris VS", gameConstants.centerX-60, gameConstants.screenHeight-40);
-        game.font.draw(game.batch, "main menu", gameConstants.centerX-30, gameConstants.screenHeight-80);
+        game.font.getData().setScale(1.2f,1.0f);
+        game.font.draw(game.batch, "Welcome to Tetris VS", gameConstants.centerX-10, gameConstants.screenHeight+80);
+        game.font.draw(game.batch, "main menu", gameConstants.centerX+25, gameConstants.screenHeight+60);
+        game.font.draw(game.batch, "main menu", gameConstants.centerX+25, gameConstants.screenHeight+60);
+        game.font.draw(game.batch,"Status:", 75, 325);
+        game.font.draw(game.batch, Connection, 75, 300);
+        game.font.draw(game.batch,"Server ip address:", 30, 510);
+        game.font.draw(game.batch,"Port:", 50, 450);
         game.batch.end();
         
 

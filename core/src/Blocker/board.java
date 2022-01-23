@@ -1,11 +1,5 @@
 package Blocker;
 
-import com.mygdx.game.TetrisTheGame;
-import com.mygdx.game.gameConstants;
-import org.graalvm.compiler.lir.LIRInstruction;
-
-import javax.sound.sampled.Line;
-import java.util.Vector;
 
 public class board {
     public int[][] Boarder;

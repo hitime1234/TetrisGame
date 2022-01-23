@@ -41,6 +41,7 @@ public class MainMenuScreen implements Screen {
     }
 
     public MainMenuScreen(final MyGdxGame game) {
+
         Gdx.graphics.setWindowedMode(800, 480);
         CreateSessionFile();
         //Get screens for future use
@@ -121,6 +122,7 @@ public class MainMenuScreen implements Screen {
 
     @Override
     public void render(float delta) {
+
         stage.act(delta);
         ScreenUtils.clear(0, 0, 0.2f, 1);
         camera.update();

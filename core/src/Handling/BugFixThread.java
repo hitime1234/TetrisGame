@@ -28,6 +28,7 @@ public class BugFixThread extends Thread{
     @Override
     public void run() {
             lineChecksBlanks();
+            UnderFlow();
             applyValues();
     }
 
@@ -64,6 +65,23 @@ public class BugFixThread extends Thread{
             for (int i = 0; i < DUMPsIZE; i++) {
                 DUMP.get(i).dropY(25, hold[0]);
                 DeadBlock.DrawTypeRectangle(DUMP.get(i));
+            }
+        }
+    }
+    public void UnderFlow(){
+        for (int i=0;i<DUMP.size();i++){
+            for (int y=0;y<DUMP.get(i).cube.length;y++) {
+                if (DUMP.get(i).cube[y] != null) {
+                    if (DUMP.get(i).cube[y].getY() < 25) {
+                        DeadBlock.BuildArray();
+                        for (int x = 0; x < DUMP.size(); x++) {
+                            DUMP.get(x).moveY(-25);
+                            DeadBlock.DrawTypeRectangle(DUMP.get(x));
+                        }
+                        i = DUMP.size() + 2;
+                        break;
+                    }
+                }
             }
         }
     }

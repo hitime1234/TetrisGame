@@ -14,8 +14,15 @@ public class queue {
     private int index = 0;
     private int GenIndex =0;
 
+    public basicBlock getObjects(int i) {
+        return objects.get(i);
+    }
 
-    public int ClassicBlockGeneration(ShapeRenderer Drawing,int speed){
+    public int getIndex() {
+        return index;
+    }
+
+    public int ClassicBlockGeneration(ShapeRenderer Drawing, int speed){
         int block = 0;
         //This uses the bag randomizer method
         //were a bag is picked in order then randomized
@@ -23,16 +30,17 @@ public class queue {
         //something goes here
         //https://stackoverflow.com/questions/29551450/tetris-shape-generation-algorithm-in-java/
         //https://harddrop.com/forums/index.php?showtopic=1925
-        for (int i=0;i<7;i++) {
-            RNGblock hold = new RNGblock(Drawing, i, speed);
-            basicBlock BUILT = hold.getHold();
-            BAG.add(BUILT);
-        }
+            for (int x = 0; x < 7; x++) {
+                RNGblock hold = new RNGblock(Drawing, x, speed);
+                basicBlock BUILT = hold.getHold();
+                BAG.add(BUILT);
+            }
 
-        Collections.shuffle(BAG);
-        for (int i=0;i<BAG.size();i++) {
-            objects.add(BAG.get(i));
-        }
+            Collections.shuffle(BAG);
+            for (int y = 0; y < BAG.size(); y++) {
+                objects.add(BAG.get(y));
+            }
+        System.out.println("Size:" + (objects.size()-index));
         return 1;
     }
 
@@ -107,7 +115,8 @@ public class queue {
         objects.remove(index);
         switch (Type) {
             case 1:
-                if (GenIndex > 5){
+                if (GenIndex > 3){
+                    ClassicBlockGeneration(Drawing,speed);
                     ClassicBlockGeneration(Drawing,speed);
                     GenIndex =0;
                 }
@@ -120,7 +129,8 @@ public class queue {
                 objects.add(index, BUILT);
                 index++;
                 GenIndex++;
-                if (GenIndex > 19) {
+                if (GenIndex > 14) {
+                    generate(Drawing, speed);
                     generate(Drawing, speed);
                     GenIndex =0;
                 }

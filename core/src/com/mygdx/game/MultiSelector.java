@@ -56,8 +56,7 @@ public class MultiSelector implements Screen {
             @Override
             public boolean touchDown(InputEvent event,float x,float y,int pointer,int button){
                 System.out.println("PRESSED");
-                game.setScreen(new PracticeModeSelector(game));
-                dispose();
+                game.setScreen(new PracticeModeSelectorMulti(game));
                 return true;
             }
         });
@@ -65,8 +64,7 @@ public class MultiSelector implements Screen {
             @Override
             public boolean touchDown(InputEvent event,float x,float y,int pointer,int button) {
                 System.out.println("button 2");
-                game.setScreen(new GameScreen2(game));
-                dispose();
+                game.setScreen(new PracticeModeSelectorMulti(game));
                 //game.setScreen(new ());
                 return true;
             }

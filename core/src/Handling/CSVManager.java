@@ -1,7 +1,7 @@
 package Handling;
 
 import com.badlogic.gdx.Input;
-import org.graalvm.compiler.nodes.NodeView;
+
 
 import java.io.*;
 import java.util.ArrayList;
@@ -32,6 +32,7 @@ public class CSVManager {
     }
 
     public void splitUPData(String line){
+        Data = new ArrayList<>();
         String[] part = line.split(",");
         for (int i=0;i< part.length;i++) {
             Data.add(part[i]);
@@ -59,6 +60,17 @@ public class CSVManager {
         } catch (IOException e) {
             // Exception handling
             Error = -1;
+        }
+    }
+
+    public void ForceWrite(String Filename,String dd) {
+        try(FileWriter fileWriter = new FileWriter(directory + System.getProperty("file.separator") + "temp.txt")) {
+            fileWriter.write(Filename);
+            fileWriter.write("\n\n\n");
+            fileWriter.write(dd);
+            fileWriter.close();
+        } catch (IOException e){
+
         }
     }
 
@@ -133,7 +145,7 @@ public class CSVManager {
                     Data.add (String.valueOf(Input.Keys.SPACE));
                     //hold - 31
                     Data.add (String.valueOf(Input.Keys.C));
-                } catch (NullPointerException e) {}
+                } catch (NullPointerException e) {System.out.println("error" + e);}
                 CreateCSV(File);
                 ReadCSV(File);
                 break;

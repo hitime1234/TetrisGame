@@ -1,6 +1,5 @@
 package com.mygdx.game;
 
-import Blocker.BasicCube;
 import Blocker.basicBlock;
 import Blocker.board;
 import Blocker.queue;
@@ -15,9 +14,7 @@ import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
@@ -26,26 +23,19 @@ import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
-import jdk.nashorn.internal.runtime.regexp.joni.ast.StringNode;
-import jdk.tools.jmod.Main;
-
-import javax.sound.sampled.Line;
-
-import java.io.*;
 import java.util.ArrayList;
 
-import static com.mygdx.game.gameConstants.*;
 
 public class TetrisTheGame extends ScreenAdapter implements Screen  {
+
     private final Stage stage;
-    private final queue queuing;
+    private queue queuing;
     private final long start;
-    private final ArrayList<basicBlock> DUMP2;
+    private ArrayList<basicBlock> DUMP2;
     private LoseChecking LoseCheckThread;
-    private board DeadBlock;
+    private final board DeadBlock;
     private final MyGdxGame game;
     private final Music menuMusic;
     private final Music moveMusic;
@@ -55,52 +45,42 @@ public class TetrisTheGame extends ScreenAdapter implements Screen  {
     private final Music Line2Music;
     private final Music Line3Music;
     private final Music TetrisMusic;
-    private int index;
     private basicBlock hold;
     private ShapeRenderer shapeRenderer;
     SpriteBatch batch;
     Texture img;
     private boolean quit = false;
-    private OrthographicCamera camera;
-    private Texture bucketImage;
-    private int speed = 1;
+    private final OrthographicCamera camera;
+    private int speed ;
     private boolean grace = false;
-    private int OSpeed = 1;
-    private int randomV = 0;
-    private float y;
+    private int OSpeed ;
     private int score =0;
     private float x;
-    private float width;
     private int dumpSize = 0;
     private boolean swap = true;
-    private float height;
     private int Sleep =0;
-    private basicBlock[] DUMP;
-    private basicBlock tempBlock;
+
     private int DropTime = 50;
     boolean DropDown = false;
     private int LinesCount = 0;
     private int FrameCount =0;
     private long pastTime = System.currentTimeMillis();
-    private long currentTime = System.currentTimeMillis();
     public int fps = 0;
-    private int speedChange = 20;
+    private final int speedChange = 20;
     private basicBlock holdQueue;
     public passingData ThreadData;
     private BugFixThread fixBug;
     private boolean loseScreen = false;
-    private CSVManager file;
+    private final CSVManager file;
     private boolean write = true;
-    private int KeyRight;
-    private int keyLeft;
-    private int keyFlip;
-    private int keyHold;
-    private int keyHardDrop;
-    private int keySoftDrop;
+    private final int KeyRight;
+    private final int keyLeft;
+    private final int keyFlip;
+    private final int keyHold;
+    private final int keyHardDrop;
+    private final int keySoftDrop;
+    private BitmapFont font;
 
-    public void LoseScreen(){
-        loseScreen = true;
-    }
 
     public void QuitButton(){
         Skin skin = new Skin(Gdx.files.internal(gameConstants.skin));
@@ -111,7 +91,7 @@ public class TetrisTheGame extends ScreenAdapter implements Screen  {
         table.setTransform(true);
         table.setScale(0.9f);
         table.add(button2);
-        table.setPosition(335,-180);
+        table.setPosition(335,-230);
         button2.addListener(new InputListener(){
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
@@ -140,12 +120,13 @@ public class TetrisTheGame extends ScreenAdapter implements Screen  {
         moveMusic.setVolume(0.4f);
         PlaceMusic.setVolume(0.6f);
 
+        font = new BitmapFont();
+
 
         speed = speedInt;
         OSpeed = speedInt;
-        randomV =randomValue;
         camera = new OrthographicCamera();
-        bucketImage = new Texture(Gdx.files.internal("bucket.png"));
+        Texture bucketImage = new Texture(Gdx.files.internal("bucket.png"));
         stage = new Stage(new ExtendViewport(800, 480, 1280, 720));
         Gdx.input.setInputProcessor(stage);
         this.game = game;
@@ -154,10 +135,10 @@ public class TetrisTheGame extends ScreenAdapter implements Screen  {
         shapeRenderer = new ShapeRenderer();
         batch = new SpriteBatch();
         img = new Texture("badlogic.jpg");
-        height = 50;
-        width = 20;
+        float height = 50;
+        float width = 20;
         x= 300;
-        y=300;
+        float y = 300;
         DeadBlock = new board();
         //ABOSLOUTE DUMPTRUCK
         //DUMP = new basicBlock[9000];
@@ -167,7 +148,6 @@ public class TetrisTheGame extends ScreenAdapter implements Screen  {
 
         queuing = new queue(shapeRenderer,25,randomValue);
         hold = queuing.DeQueue(shapeRenderer,25);
-        index = 0;
         QuitButton();
         ThreadData = new passingData(DUMP2,DeadBlock);
         fixBug = new BugFixThread(ThreadData);
@@ -197,19 +177,18 @@ public class TetrisTheGame extends ScreenAdapter implements Screen  {
         //fps counter
 
         //updates thread data
-
-
-        currentTime = System.currentTimeMillis();
+        font.getData().setScale(1,1);
+        //font = new BitmapFont();
+        long currentTime = System.currentTimeMillis();
         if (currentTime >= (pastTime + 1000)){
             pastTime = System.currentTimeMillis();
             fps  = FrameCount;
             FrameCount = 0;
-            BitmapFont font = new BitmapFont();
 
             font.draw(batch, Integer.toString(FrameCount), 10, 10);
         }
         else{
-            BitmapFont font = new BitmapFont();
+
 
             font.draw(batch, Integer.toString(fps), 10, 10);
         }
@@ -219,11 +198,11 @@ public class TetrisTheGame extends ScreenAdapter implements Screen  {
 
     public void Counter(SpriteBatch batch){
         //Draws Text and resizes it for the game
-        BitmapFont font = new BitmapFont();
-        font.getData().setScale(3,3);
-        font.draw(batch, "Score: "+Integer.toString(score), 1000, 600);
-        font.getData().setScale(2,2);
-        font.draw(batch, "speed: "+Integer.toString(OSpeed), 1000, 650);
+        font.getData().setScale(2.2f,1.8f);
+        font.draw(batch, "Score: "+ score, 880, 600);
+        font.getData().setScale(1.5f,1.25f);
+        font.draw(batch, "speed: "+ OSpeed, 880, 630);
+        font.getData().setScale(1,1);
 
     }
 
@@ -299,6 +278,28 @@ public class TetrisTheGame extends ScreenAdapter implements Screen  {
             holdQueue.draw();
         }
     }
+
+    public void DrawNextInLine(){
+        basicBlock Next1 = queuing.getObjects(queuing.getIndex()).clone();
+        basicBlock Next2 = queuing.getObjects(queuing.getIndex()+1).clone();
+        basicBlock Next3 = queuing.getObjects(queuing.getIndex()+2).clone();
+        if (Next1 != null){
+            Next1.setX(573);
+            Next1.setY(370);
+            Next1.draw();
+        }
+        if (Next2 != null){
+            Next2.setX(573);
+            Next2.setY(240);
+            Next2.draw();
+        }
+        if (Next3 != null){
+            Next3.setX(573);
+            Next3.setY(120);
+            Next3.draw();
+        }
+    }
+
 
 
 
@@ -378,7 +379,7 @@ public class TetrisTheGame extends ScreenAdapter implements Screen  {
         fontTitle.getData().setScale(1.25f,1.25f);
         fontTitle.setColor(Color.BLACK);
         fontTitle.draw(batch, "You lose", 470, 600);
-        BitmapFont font = new BitmapFont(Gdx.files.internal("gdx-skins-master/quantum-horizon/raw/font-export.fnt"));
+        font = new BitmapFont(Gdx.files.internal("gdx-skins-master/quantum-horizon/raw/font-export.fnt"));
         font.getData().setScale(1.5f,1.5f);
         font.setColor(Color.GOLD);
         font.draw(batch, "Your score was " + score, 300, 500);
@@ -424,8 +425,24 @@ public class TetrisTheGame extends ScreenAdapter implements Screen  {
 
     @Override
     public void render(float delta) {
+
+        //fix bug with clears
+        for (int i=0;i<DUMP2.size();i++) {
+            try {
+                for (int j = 0; i < DUMP2.get(i).cube.length; i++) {
+                    if (DUMP2.get(i).cube[j].getY() < 25) {
+                        DUMP2.get(i).cube[j] = null;
+                    }
+                }
+            }
+            catch ( Exception e){
+            }
+        }
+
+
         if (loseScreen == false) {
             loseScreen = LoseCheckThread.Lose;
+
             if (loseScreen == false) {
                 LoseCheckThread = new LoseChecking(DUMP2);
             }
@@ -439,6 +456,8 @@ public class TetrisTheGame extends ScreenAdapter implements Screen  {
         ScreenUtils.clear(0, 0, 0.2f, 1);
         camera.update();
         //inputs
+
+
 
 
 
@@ -501,8 +520,8 @@ public class TetrisTheGame extends ScreenAdapter implements Screen  {
                     }
 
 
-                    while (hold.cube[0].getX() > 425 && hold.cube[1].getX() > 425 && hold.cube[2].getX() > 425 && hold.cube[3].getX() > 425) {
-                        if (hold.cube[0].getX() > 425 && hold.cube[1].getX() > 425 && hold.cube[2].getX() > 425 && hold.cube[3].getX() > 425) {
+                    while (hold.cube[0].getX() >= 425 && hold.cube[1].getX() >= 425 && hold.cube[2].getX() >= 425 && hold.cube[3].getX() >= 425) {
+                        if (hold.cube[0].getX() >= 425 && hold.cube[1].getX() >= 425 && hold.cube[2].getX() >= 425 && hold.cube[3].getX() >= 425) {
                             hold.moveX(-25);
                         }
                     }
@@ -521,13 +540,66 @@ public class TetrisTheGame extends ScreenAdapter implements Screen  {
                         hold.moveX(25);
                     }
 
+                    if (Gdx.input.isKeyPressed(keyLeft) && !hold.CheckGreaterX(425) && !hold.CheckLessX(300)){
+                        hold.moveX(-25);
+
+                    }
+                    else if(Gdx.input.isKeyPressed(KeyRight) && !hold.CheckGreaterX(425) && !hold.CheckLessX(300)){
+                        hold.moveX(25);
+
+                    }
+
 
                     while (DeadBlock.Check(hold)) {
-                        hold.moveY(-25);
                         flag = true;
+                        if (DeadBlock.Check(hold)) {
+                            hold.moveX(25);
+                            if (DeadBlock.Check(hold)) {
+                                hold.moveX(-25);
+                                hold.moveX(-25);
+
+                                if (DeadBlock.Check(hold)) {
+                                    hold.moveX(25);
+                                    hold.moveY(-25);
+
+                                }
+                            } else {
+                                //No issue
+                            }
+                        }
                     }
                     if (flag) {
                         hold.moveY(25);
+                    }
+
+
+
+
+                    if ((hold.CheckLessX(300) || hold.CheckGreaterX(425) || hold.cube[0].getY() < 25 || hold.cube[1].getY() < 25 || hold.cube[2].getY() < 25 || hold.cube[3].getY() < 25) && flag){
+                        boolean flag1 = false;
+                        boolean flag2 = false;
+                        boolean flag3 = false;
+
+                        while (hold.CheckLessX(300) || DeadBlock.Check(hold)){
+                            flag1 = true;
+                            hold.moveX(25);
+                            if (hold.CheckGreaterX(425)){
+                                hold.moveX(-125);
+                                hold.moveY(-25);
+                            }
+                        }
+                        while (hold.CheckGreaterX(425) || DeadBlock.Check(hold)){
+                            flag2 = true;
+                            hold.moveX(-25);
+                            if (hold.CheckLessX(300)){
+                                hold.moveX(125);
+                                hold.moveY(-25);
+                            }
+                        }
+                        while (hold.cube[0].getY() < 25 || hold.cube[1].getY() < 25 || hold.cube[2].getY() < 25 || hold.cube[3].getY() < 25 || DeadBlock.Check(hold)){
+                            flag3 = true;
+                            hold.moveY(-25);
+                        }
                     }
 
                 }
@@ -564,11 +636,12 @@ public class TetrisTheGame extends ScreenAdapter implements Screen  {
             hold.draw();
 
 
+
             if (DeadBlock.Check(hold) && DropTime > 0 & grace == false) {
                 DropDown = true;
-                DropTime = 150;
+                DropTime = 100;
                 grace = true;
-            } else if (DeadBlock.Check(hold) == false && grace == true) {
+            } else if (DeadBlock.Check(hold) == false && grace == true && DropTime < 10) {
                 grace = false;
             }
 
@@ -589,7 +662,6 @@ public class TetrisTheGame extends ScreenAdapter implements Screen  {
 
 
             if (DeadBlock.Check(hold) && DropTime <= 0 & grace == true) {
-
                 PlaceMusic.play();
                 grace = false;
                 swap = true;
@@ -599,10 +671,8 @@ public class TetrisTheGame extends ScreenAdapter implements Screen  {
                 DeadBlock.add(hold);
                 lineChecks();
                 LoseCheckThread.start();
-
                 //DeadBlock.Output();
                 hold = queuing.DeQueue(shapeRenderer, 25);
-                index++;
             } else {
                 DropDown = false;
             }
@@ -617,13 +687,11 @@ public class TetrisTheGame extends ScreenAdapter implements Screen  {
                 //DeadBlock.Output();
                 lineChecks();
                 hold = queuing.DeQueue(shapeRenderer, 25);
-                index++;
             } else if (hold.GetLowestY() < 25) {
                 PlaceMusic.play();
                 swap = true;
                 hold.setY(25);
                 hold.draw();
-                DUMP[index] = hold;
                 DUMP2.add(hold);
                 DeadBlock.add(hold);
                 lineChecks();
@@ -632,7 +700,6 @@ public class TetrisTheGame extends ScreenAdapter implements Screen  {
 
 
                 hold = queuing.DeQueue(shapeRenderer, 25);
-                index++;
             }
 
 
@@ -641,13 +708,7 @@ public class TetrisTheGame extends ScreenAdapter implements Screen  {
 
             //shapeRenderer = new  ShapeRenderer();
             shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-            if (y > 0) {
-                y = y - speed;
-            } else {
-                //new shape
-                shapeRenderer.rect(x, 300, width, height);
 
-            }
 
             for (int i = 1; i <= 21; i++) {
                 shapeRenderer.rect(300, 30 * i, 300, 1);
@@ -660,6 +721,12 @@ public class TetrisTheGame extends ScreenAdapter implements Screen  {
             shapeRenderer.rect(200, 700, 4, -150);
             shapeRenderer.rect(50, 700, 154, 4);
             shapeRenderer.rect(50, 550, 152, 4);
+
+            shapeRenderer.rect(620, 550, 4, -430);
+            shapeRenderer.rect(770, 550, 4, -430);
+            shapeRenderer.rect(620, 550, 154, 4);
+            shapeRenderer.rect(620, 120, 152, 4);
+
         }
 
 
@@ -670,6 +737,8 @@ public class TetrisTheGame extends ScreenAdapter implements Screen  {
          */
 
         shapeRenderer.end();
+
+
 
         if (loseScreen) {
             shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
@@ -694,9 +763,12 @@ public class TetrisTheGame extends ScreenAdapter implements Screen  {
 
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
+
+
+
+
         if (loseScreen != true) {
-            BitmapFont font = new BitmapFont();
-            font.getData().setScale(2.25f, 2f);
+            font.getData().setScale(2.3f, 1.8f);
             font.draw(batch, "Hold", 155, 525);
             fpsCounter(batch);
         }
@@ -706,19 +778,25 @@ public class TetrisTheGame extends ScreenAdapter implements Screen  {
 
         batch.end();
         batch.begin();
+
+
+
+
         if (loseScreen != true) {
             Counter(batch);
         }
         batch.end();
 
         DrawHold();
+        DrawNextInLine();
 
 
         stage.act(delta);
         stage.draw();
+
         if (quit == true){
-            game.setScreen(new MainMenuScreen(game));
             dispose();
+            game.setScreen(new MainMenuScreen(game));
 
         }
     }
@@ -759,6 +837,16 @@ public class TetrisTheGame extends ScreenAdapter implements Screen  {
         img.dispose();
         stage.dispose();
         removeMusic();
+        queuing = null;
+        DUMP2 = null;
+        LoseCheckThread.interrupt();
+        LoseCheckThread = null;
+        holdQueue = null;
+        ThreadData =null;
+        fixBug.interrupt();
+        fixBug = null;
+        font = null;
+
 
 
     }
