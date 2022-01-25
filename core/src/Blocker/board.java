@@ -1,6 +1,10 @@
 package Blocker;
 
 
+import Handling.BugFixThread;
+
+import java.util.ArrayList;
+
 public class board {
     public int[][] Boarder;
     public board(){
@@ -31,7 +35,7 @@ public class board {
     }
 
     //Something Dumb is just a random variable name
-    public void add(basicBlock SomethingDumb){
+    public void add(basicBlock SomethingDumb,ArrayList<basicBlock> Dump2){
         int Type = SomethingDumb.Shape;
         BasicCube[] hold = SomethingDumb.getCube();
             /**
@@ -45,7 +49,7 @@ public class board {
             //DrawY(vector[i][1],holdX,holdY);
 
             //}
-            DrawTypeRectangle(SomethingDumb);
+            DrawTypeRectangle(SomethingDumb,Dump2);
     }
 
     public int[] CheckClear(){
@@ -202,34 +206,58 @@ public class board {
 
 
 
-    public void DrawTypeRectangle(basicBlock block){
+    public void DrawTypeRectangle(basicBlock block,ArrayList Dump2){
         //bottom axis
-        for (int x=0;x<block.getNumberOCubes();x++) {
-            BasicCube[] holder = block.getCube();
-            if (holder[x] != null) {
-                int holdX = holder[x].getX();
-                int holdY = holder[x].getY();
-                int length = holder[x].getLength();
-                int height = holder[x].getLength();
-                int[][] vector = holder[x].getVector();
-                //x axis
+        try {
+            for (int x = 0; x < block.getNumberOCubes(); x++) {
+                BasicCube[] holder = block.getCube();
+                if (holder[x] != null) {
+                    int holdX = holder[x].getX();
+                    int holdY = holder[x].getY();
+                    int length = holder[x].getLength();
+                    int height = holder[x].getLength();
+                    int[][] vector = holder[x].getVector();
+                    //x axis
 
 
-                for (int i = 0; i < length - 1; i++) {
-                    Boarder[vector[0][1]][vector[0][0] + i] = 1;
-                    Boarder[vector[2][1]][vector[2][0] + i] = 1;
-                }
+                    for (int i = 0; i < length - 1; i++) {
+                        Boarder[vector[0][1]][vector[0][0] + i] = 1;
+                        Boarder[vector[2][1]][vector[2][0] + i] = 1;
+                    }
 
 
-                //y axis
-                for (int i = 0; i <= height; i++) {
-                    Boarder[vector[0][1] + i][vector[0][0]] = 1;
-                    Boarder[vector[1][1] + i][vector[1][0] - 1] = 1;
+                    //y axis
+                    for (int i = 0; i <= height; i++) {
+                        Boarder[vector[0][1] + i][vector[0][0]] = 1;
+                        Boarder[vector[1][1] + i][vector[1][0] - 1] = 1;
+                    }
+
                 }
 
             }
+        } catch (ArrayIndexOutOfBoundsException e){
+             UnderFlow(Dump2);
+             DrawTypeRectangle(block,Dump2);
         }
 
+    }
+
+    public void UnderFlow(ArrayList<basicBlock> DUMP){
+        for (int i=0;i<DUMP.size();i++){
+            for (int y=0;y<DUMP.get(i).cube.length;y++) {
+                if (DUMP.get(i).cube[y] != null) {
+                    if (DUMP.get(i).cube[y].getY() < 25) {
+                        BuildArray();
+                        for (int x = 0; x < DUMP.size(); x++) {
+                            DUMP.get(x).moveY(-25);
+                            DrawTypeRectangle(DUMP.get(x),DUMP);
+                        }
+                        i = DUMP.size() + 2;
+                        break;
+                    }
+                }
+            }
+        }
     }
 
 

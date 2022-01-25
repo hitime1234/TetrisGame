@@ -309,7 +309,7 @@ public class TetrisTheGame extends ScreenAdapter implements Screen  {
             DeadBlock.BuildArray();
             for (int i = 0; i < dumpSize; i++) {
                 DUMP2.get(i).dropY(25 * lineCleared,newStart);
-                DeadBlock.DrawTypeRectangle(DUMP2.get(i));
+                DeadBlock.DrawTypeRectangle(DUMP2.get(i),DUMP2);
             }
 
         }
@@ -353,7 +353,7 @@ public class TetrisTheGame extends ScreenAdapter implements Screen  {
             DeadBlock.BuildArray();
             for (int i = 0; i < DUMPsIZE; i++) {
                 DUMP2.get(i).dropY(25,26);
-                DeadBlock.DrawTypeRectangle(DUMP2.get(i));
+                DeadBlock.DrawTypeRectangle(DUMP2.get(i),DUMP2);
             }
         }
     }
@@ -425,7 +425,7 @@ public class TetrisTheGame extends ScreenAdapter implements Screen  {
 
     @Override
     public void render(float delta) {
-
+        font.getRegion().getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         //fix bug with clears
         for (int i=0;i<DUMP2.size();i++) {
             try {
@@ -668,7 +668,7 @@ public class TetrisTheGame extends ScreenAdapter implements Screen  {
                 DropDown = false;
                 //DUMP[index] = hold;
                 DUMP2.add(hold);
-                DeadBlock.add(hold);
+                DeadBlock.add(hold,DUMP2);
                 lineChecks();
                 LoseCheckThread.start();
                 //DeadBlock.Output();
@@ -683,7 +683,7 @@ public class TetrisTheGame extends ScreenAdapter implements Screen  {
                 swap = true;
                 //DUMP[index] = hold;
                 DUMP2.add(hold);
-                DeadBlock.add(hold);
+                DeadBlock.add(hold,DUMP2);
                 //DeadBlock.Output();
                 lineChecks();
                 hold = queuing.DeQueue(shapeRenderer, 25);
@@ -693,7 +693,7 @@ public class TetrisTheGame extends ScreenAdapter implements Screen  {
                 hold.setY(25);
                 hold.draw();
                 DUMP2.add(hold);
-                DeadBlock.add(hold);
+                DeadBlock.add(hold,DUMP2);
                 lineChecks();
 
                 //DeadBlock.Output();

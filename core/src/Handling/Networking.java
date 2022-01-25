@@ -1,6 +1,7 @@
 package Handling;
 
 
+import javax.xml.crypto.Data;
 import java.io.*;
 import java.net.Socket;
 
@@ -9,10 +10,12 @@ public class Networking implements Runnable{
     private static String dataToSend= "hello1";
     private static Socket sock;
     private static String DataToRecv = "";
+    public final String username;
+    private final String password;
     private  BufferedReader in;
     private PrintWriter writerToClient;
     private InputStream is;
-
+    public boolean ready = false;
 
     public static void sendOFF(String data){
         dataToSend = data;
@@ -45,6 +48,7 @@ public class Networking implements Runnable{
 
     public int p2pMode(PrintWriter writerToClient,BufferedReader in,InputStream is){
         String hold = "";
+
         try {
             while (true) {
                 send(writerToClient, dataToSend);
@@ -80,13 +84,35 @@ public class Networking implements Runnable{
 
 
 
-    public Networking(String ServerIp,int Port)  {
+    public Networking(String ServerIp,int Port,String Username,String Password,boolean Signup,int Type){
+        this.username = Username;
+        this.password = Password;
+
         // write your code here
         try {
             sock = new Socket(ServerIp, Port);
             in = new BufferedReader(new InputStreamReader(sock.getInputStream()));
             writerToClient = new PrintWriter(sock.getOutputStream());
             this.is = sock.getInputStream();
+
+            System.out.println(Signup);
+            if (Type ==1){
+                send(writerToClient,"GetRank");
+            }
+            else {
+                send(writerToClient, "Open");
+            }
+            Recv(in);
+            send(writerToClient,username);
+            send(writerToClient,password);
+
+            if (Signup){
+                send(writerToClient,"NEW");
+            }
+            else{
+                send(writerToClient,"OLD");
+            }
+            DataToRecv = Recv(in);
         }
         catch (Exception e){
             System.out.println("closed");
@@ -94,15 +120,12 @@ public class Networking implements Runnable{
         }
     }
 
+
+
+
     @Override
     public void run() {
         //send and recv
-
-        send(writerToClient,"Open");
-        Recv(in);
-        send(writerToClient,"admin");
-        send(writerToClient,"admin");
-
         String hold = "";
         boolean run = true;
         while (run) {
@@ -111,11 +134,9 @@ public class Networking implements Runnable{
             if (hold.equals("done")){
                 run = false;
             }
-
         }
         Recv(in);
         System.out.println("ready");
-
         p2pMode(writerToClient,in,is);
     }
 }

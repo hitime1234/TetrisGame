@@ -15,18 +15,19 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 
 
-public class PracticeModeSelectorMulti implements Screen {
+public class ServerRank implements Screen {
     final MyGdxGame game;
     private final BitmapFont font;
     private final GameScreen2 ProFortniteGamer;
-    private final CheckBox button2;
-    private final CheckBox button3;
-    private final TextField SpeedText;
     private final TextField ServerIp;
     private final TextField Port;
     public final TextField username;
     private final TextField password;
     private final CheckBox button9;
+    private final TextField Rank;
+    private final TextField HighScore;
+    private final TextField Time;
+    private final TextField GameWon;
     private int speedInt = 1;
     private int random = 0;
     private String Connection = "waiting to connect";
@@ -37,8 +38,12 @@ public class PracticeModeSelectorMulti implements Screen {
 
     OrthographicCamera camera;
     private Networking Client = null;
+    private String Score;
+    private String time;
+    private String Nwin;
+    private String Ranker;
 
-    public PracticeModeSelectorMulti(final MyGdxGame game) {
+    public ServerRank(final MyGdxGame game) {
         Gdx.graphics.setWindowedMode(950, 580);
         stage = new Stage(new ExtendViewport(800, 480, 1080, 1920));
         Gdx.input.setInputProcessor(stage);
@@ -51,23 +56,13 @@ public class PracticeModeSelectorMulti implements Screen {
 
         //final Button button2 = new TextButton("play",skin);
         //converted to a CheckBox
-        button2  = new CheckBox("Pure random Mode",skin);
-
-        button3 = new CheckBox("Standard Random Mode",skin);
         button9 = new CheckBox("Sign up?",skin);
 
         Button button4 = new TextButton("Go Back",skin);
-        Button button5 = new TextButton("Start Game",skin);
-        Button button6 = new TextButton("+",skin);
-        Button button7 = new TextButton("-",skin);
         Button button8 = new TextButton("connect",skin);
 
 
-        button2.getLabelCell().padLeft(7);
-        button2.setSize(gameConstants.col_width*2,gameConstants.col_height/2);
-        button2.setPosition(gameConstants.col_width*2+95,Gdx.graphics.getHeight()-(gameConstants.col_width*1+80));
-        button2.setTransform(true);
-        button2.scaleBy(0.1f);
+
 
         button9.getLabelCell().padLeft(7);
         button9.setSize(gameConstants.col_width*2,gameConstants.col_height/2);
@@ -75,14 +70,10 @@ public class PracticeModeSelectorMulti implements Screen {
         button9.setTransform(true);
         button9.scaleBy(0.1f);
 
-        button3.setSize(gameConstants.col_width*2,gameConstants.col_height/2);
-        button3.getLabelCell().padLeft(7);
-        button3.setPosition(gameConstants.col_width*2+95,Gdx.graphics.getHeight()-(gameConstants.col_width*2+40));
-        button3.setTransform(true);
-        button3.scaleBy(0.1f);
+
 
         button4.setSize(gameConstants.col_width*2,gameConstants.col_height/2);
-        button4.setPosition(gameConstants.col_width*2+95,Gdx.graphics.getHeight()-(gameConstants.col_width*7/2));
+        button4.setPosition(gameConstants.col_width*2+95,Gdx.graphics.getHeight()-(gameConstants.col_width*7/4));
         button4.setTransform(true);
         button4.scaleBy(0.1f);
         button4.addListener(new InputListener(){
@@ -94,48 +85,7 @@ public class PracticeModeSelectorMulti implements Screen {
             }
         });
 
-        button5.setSize(gameConstants.col_width*2,gameConstants.col_height/2);
-        button5.setPosition(gameConstants.col_width*4+100,Gdx.graphics.getHeight()-(gameConstants.col_width*4 + 30));
-        button5.setTransform(true);
-        button5.scaleBy(0.1f);
-        button5.addListener(new InputListener(){
-            @Override
-            public boolean touchDown(InputEvent event,float x,float y,int pointer,int button) {
-                System.out.println("Starting Game");
-                game.setScreen(new MultiTetrisTheGame(game,speedInt,random,Client));
-                return true;
-            }
-        });
 
-        button6.setSize(gameConstants.col_width*1,gameConstants.col_height/4);
-        button6.setPosition(gameConstants.col_width*4+50,Gdx.graphics.getHeight()-(gameConstants.col_width*3-20));
-        button6.setTransform(true);
-        button6.scaleBy(0.1f);
-        button6.addListener(new InputListener(){
-            @Override
-            public boolean touchDown(InputEvent event,float x,float y,int pointer,int button) {
-                System.out.println("speed up");
-                if (speedInt < 16) {
-                    speedInt = speedInt + 1;
-                }
-                return true;
-            }
-        });
-
-        button7.setSize(gameConstants.col_width*1,gameConstants.col_height/4);
-        button7.setPosition(gameConstants.col_width*2+50,Gdx.graphics.getHeight()-(gameConstants.col_width*3-20));
-        button7.setTransform(true);
-        button7.scaleBy(0.1f);
-        button7.addListener(new InputListener(){
-            @Override
-            public boolean touchDown(InputEvent event,float x,float y,int pointer,int button) {
-                System.out.println("speed down");
-                if (speedInt > 1) {
-                    speedInt = speedInt - 1;
-                }
-                return true;
-            }
-        });
 
 
         button8.setSize(gameConstants.col_width*2,gameConstants.col_height/3);
@@ -146,7 +96,7 @@ public class PracticeModeSelectorMulti implements Screen {
             @Override
             public boolean touchDown(InputEvent event,float x,float y,int pointer,int button) {
                 try {
-                    Client = new Networking(ServerIp.getText(), Integer.valueOf(Port.getText()), username.getText(), password.getText(),button9.isChecked(),0);
+                    Client = new Networking(ServerIp.getText(), Integer.valueOf(Port.getText()), username.getText(), password.getText(),button9.isChecked(),1);
                     if (Client.GetRecv().equals("Die SCUM")) {
                         Connection = "Failed to connect to server \n try different username or password \n server ip and port";
                         Client = null;
@@ -162,23 +112,46 @@ public class PracticeModeSelectorMulti implements Screen {
                     else {
                         System.out.println(Client.GetRecv());
                         Connection = "Successfully connected";
+                        String Data = Client.GetRecv();
+                        String[] Array = Data.split(",");
+                        Score = Array[2];
+                        time = Array[3];
+                        Nwin = Array[4];
+                        Ranker = Array[5];
                     }
 
 
                 } catch (Exception e){
                     Connection = "Failed to connect to server \n try different username or password \n serverip and port";
+
                 }
                 return true;
             }
         });
 
+        Rank = new TextField("--",skin);
+        Rank.setSize(gameConstants.col_width*3/3,gameConstants.col_height/4);
+        Rank.setPosition(370,320);
+        Rank.scaleBy(0.3f);
 
-        button3.setChecked(true);
+        HighScore = new TextField("--",skin);
+        HighScore.setSize(gameConstants.col_width*3/3,gameConstants.col_height/4);
+        HighScore.setPosition(370,260);
+        HighScore.scaleBy(0.3f);
 
-        SpeedText = new TextField(Integer.toString(speedInt),skin);
-        SpeedText.setSize(gameConstants.col_width*3/10,gameConstants.col_height/4);
-        SpeedText.setPosition(gameConstants.col_width*39/10,Gdx.graphics.getHeight()-(gameConstants.col_width*3-20));
-        SpeedText.scaleBy(0.2f);
+        Time = new TextField("--",skin);
+        Time.setSize(gameConstants.col_width*3/3,gameConstants.col_height/4);
+        Time.setPosition(370,200);
+        Time.scaleBy(0.3f);
+
+        GameWon = new TextField("--",skin);
+        GameWon.setSize(gameConstants.col_width*3/3,gameConstants.col_height/4);
+        GameWon.setPosition(370,150);
+        GameWon.scaleBy(0.3f);
+
+
+
+
 
 
         ServerIp = new TextField("127.0.0.1",skin);
@@ -204,20 +177,18 @@ public class PracticeModeSelectorMulti implements Screen {
         password.setPasswordCharacter('*');
         password.scaleBy(0.3f);
 
-
-        stage.addActor(button2);
-        stage.addActor(button3);
         stage.addActor(button4);
-        stage.addActor(button5);
-        stage.addActor(button6);
-        stage.addActor(button7);
+
         stage.addActor(button9);
-        stage.addActor(SpeedText);
         stage.addActor(ServerIp);
         stage.addActor(Port);
         stage.addActor(button8);
         stage.addActor(username);
         stage.addActor(password);
+        stage.addActor(Time);
+        stage.addActor(HighScore);
+        stage.addActor(GameWon);
+        stage.addActor(Rank);
     }       
     @Override
     public void show() {
@@ -226,42 +197,18 @@ public class PracticeModeSelectorMulti implements Screen {
 
     @Override
     public void render(float delta) {
-        //Random mode selector
-        //needs update with switch case for better performance
-        SpeedText.setText(Integer.toString(speedInt));
-        font.getRegion().getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
-        if (button2.isPressed()){
-            button3.setChecked(false);
-        }
-        if (button3.isPressed()){
-            button2.setChecked(false);
-        }
-
-        if (button3.isChecked()){
-            random = (0);
-
-        }
-        else{
-            random = (1);
-        }
-
-        if (button2.isChecked()){
-            random = (1);
-        }
-        else{
-            random = (0);
-        }
-
-        //System.out.println(ProFortniteGamer.RandomMode);
-
-
         ScreenUtils.clear(0, 0, 0.2f, 1);
         camera.update();
         game.batch.setProjectionMatrix(camera.combined);
-
+        font.getRegion().getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         stage.act(delta);
         stage.draw();
+
+        Rank.setText(Ranker);
+        Time.setText(time);
+        HighScore.setText(Score);
+        GameWon.setText(Nwin);
 
         game.batch.begin();
         game.font.getData().setScale(1.2f,1.0f);
@@ -274,6 +221,12 @@ public class PracticeModeSelectorMulti implements Screen {
         game.font.draw(game.batch,"Port:", 30, 450);
         game.font.draw(game.batch,"username:", 30, 400);
         game.font.draw(game.batch,"password:", 30, 340);
+
+        game.font.draw(game.batch,"rank:", 400, 410);
+        game.font.draw(game.batch,"HighScore:", 400, 340);
+        game.font.draw(game.batch,"Time (milliseconds):", 400, 270);
+        game.font.draw(game.batch,"number of Games won:", 400, 210);
+        game.font.draw(game.batch,"Note ranking starts at 0.", 720, 500);
         game.batch.end();
         
 

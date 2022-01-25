@@ -64,7 +64,7 @@ public class BugFixThread extends Thread{
             DeadBlock.BuildArray();
             for (int i = 0; i < DUMPsIZE; i++) {
                 DUMP.get(i).dropY(25, hold[0]);
-                DeadBlock.DrawTypeRectangle(DUMP.get(i));
+                DeadBlock.DrawTypeRectangle(DUMP.get(i),DUMP);
             }
         }
     }
@@ -76,7 +76,7 @@ public class BugFixThread extends Thread{
                         DeadBlock.BuildArray();
                         for (int x = 0; x < DUMP.size(); x++) {
                             DUMP.get(x).moveY(-25);
-                            DeadBlock.DrawTypeRectangle(DUMP.get(x));
+                            DeadBlock.DrawTypeRectangle(DUMP.get(x),DUMP);
                         }
                         i = DUMP.size() + 2;
                         break;

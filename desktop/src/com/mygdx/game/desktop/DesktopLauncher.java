@@ -11,6 +11,7 @@ public class DesktopLauncher {
 		config.title = "Main menu";
 		config.width = 800;
 		config.height = 480;
+		config.samples = 2;
 		new LwjglApplication(new MyGdxGame(), config);
 	}
 }

@@ -1,6 +1,7 @@
 package Blocker;
 
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
 import java.io.UnsupportedEncodingException;
@@ -760,6 +761,48 @@ public class basicBlock {
         }
     }
 
+    public Color getColor(){
+
+        switch (Shape){
+            //cube
+            case 0:
+                return Color.valueOf("#FFD500");
+            case 1:
+                return Color.valueOf("#800080");
+            case 2:
+                return Color.valueOf("#ff7f00");
+            case 3:
+                return Color.valueOf("#00ffff");
+            case 4:
+                return Color.valueOf("#00ff00");
+            case 5:
+                return Color.valueOf("#0000ff");
+            case 6:
+                return Color.valueOf("#ff0000");
+            case 7:
+                return Color.valueOf("#F91C97");
+
+        }
+        return Color.BLACK;
+    }
+
+    public void CreateCube(int xHold,int yHold,int BLength, int BHeight){
+        for (int i=0;i<=5;i++) {
+            //B L-R
+            draw.line(xHold, yHold+i, xHold + BLength, yHold+i, getColor(), getColor());
+            //L B-T
+            draw.line(xHold+i, yHold, xHold+i, yHold+BHeight, getColor(), getColor());
+            //R B-T
+            draw.line(xHold+BLength-i, yHold, xHold+BLength-i, yHold+BHeight, getColor(), getColor());
+            //T L-R
+            draw.line(xHold, yHold+BHeight-i, xHold +BLength, yHold+BHeight-i, getColor(), getColor());
+        }
+        draw.setColor(Color.VIOLET);
+        draw.setColor(Color.WHITE);
+        draw.rect(xHold+5, yHold+5, BLength-10, BHeight-10);
+        draw.setColor(Color.WHITE);
+    }
+
     public void draw() {
         for (int i = 0; i < cube.length; i++) {
             try {
@@ -776,7 +819,9 @@ public class basicBlock {
                     yHold = (yHold / 25)*30;
                     xHold = (xHold/25)*30;
                     draw.begin(ShapeRenderer.ShapeType.Filled);
-                    draw.rect(xHold, yHold, BLength, BHeight);
+
+                    //draw.rect(xHold, yHold, BLength, BHeight);
+                    CreateCube(xHold, yHold, BLength, BHeight);
                     draw.end();
                 }
             }

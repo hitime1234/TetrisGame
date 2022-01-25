@@ -6,7 +6,7 @@ import java.util.Vector;
 
 public class RNGblock {
     private basicBlock hold;
-    public int x = 300;
+    public int x = 350;
     public int y = 500;
     public int speed;
 

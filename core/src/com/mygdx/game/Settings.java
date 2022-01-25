@@ -29,9 +29,7 @@ public class Settings implements Screen {
     private final TextField LEFT;
     private final TextField Flip;
     private final TextField down;
-    private final Networking Client1;
-    private final Networking Client2;
-    private final ExecutorService threadPool;
+
     private int id;
     private CSVManager file;
 
@@ -64,11 +62,11 @@ public class Settings implements Screen {
         file = new CSVManager("TESTROOT.csv",1);
 
 
-        Client1 = new Networking("127.0.0.1",25565);
-        Client2 = new Networking("127.0.0.1",25565);
-        threadPool = Executors.newCachedThreadPool();
-        threadPool.submit(Client1);
-        threadPool.submit(Client2);
+        //Client1 = new Networking("127.0.0.1",25565,"admin","admin",false,0);
+        //Client2 = new Networking("127.0.0.1",25565,"admin","admin",false,0);
+        //threadPool = Executors.newCachedThreadPool();
+        //threadPool.submit(Client1);
+        //threadPool.submit(Client2);
 
 
         this.game = game;
@@ -129,7 +127,7 @@ public class Settings implements Screen {
             public boolean touchDown(InputEvent event,float x,float y,int pointer,int button) {
                 System.out.println("returning home");
                 System.out.println("closing connection");
-                threadPool.shutdown();
+                //threadPool.shutdown();
                 game.setScreen(new MainMenuScreen(game));
                 return true;
             }
@@ -348,14 +346,14 @@ public class Settings implements Screen {
 
         stage.addActor(button4);
         stage.addActor(button5);
-        stage.addActor(button6);
-        stage.addActor(button7);
+        //stage.addActor(button6);
+        //stage.addActor(button7);
         stage.addActor(button8);
         stage.addActor(button9);
         stage.addActor(button10);
         stage.addActor(button11);
         stage.addActor(button12);
-        stage.addActor(SpeedText);
+        //stage.addActor(SpeedText);
         stage.addActor(RIGHT);
         stage.addActor(LEFT);
         stage.addActor(Flip);

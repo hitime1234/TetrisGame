@@ -36,6 +36,11 @@ public class PackerClass implements Runnable{
     private long Temp =-1l;
     public int numberLines =0;
     public int totalLines =0;
+    public boolean winCheck = false;
+    public boolean currentCheck = false;
+    public String opponent = "";
+    public String Player = "";
+    public String Results = "";
 
     public void Stop(boolean stopCode) {
         StopCode = true;
@@ -80,23 +85,46 @@ public class PackerClass implements Runnable{
                     String hold = arrayList.get(i).toString();
                     ArrayList<String> FinalData = gson.fromJson(hold, ArrayList.class);
                     String SValue = FinalData.get(0);
+                    ArrayList Value = gson.fromJson(SValue, ArrayList.class);
+                    basicBlock Output = new basicBlock(shapeRenderer, 0, 0, 0, new int[4][4], -1);
+                    Output.SetValues(Output.read(Value.get(0).toString()), Integer.parseInt(Value.get(1).toString()), Integer.parseInt(Value.get(2).toString()), Integer.parseInt(Value.get(3).toString()), Boolean.parseBoolean(Value.get(4).toString()));
+                    BasicCube[] cubeArray = new BasicCube[10];
                     String SCube1 = FinalData.get(1);
                     String SCube2 = FinalData.get(2);
                     String SCube3 = FinalData.get(3);
                     String SCube4 = FinalData.get(4);
-                    ArrayList Value = gson.fromJson(SValue, ArrayList.class);
-                    basicBlock Output = new basicBlock(shapeRenderer, 0, 0, 0, new int[4][4], -1);
-                    Output.SetValues(Output.read(Value.get(0).toString()), Integer.parseInt(Value.get(1).toString()), Integer.parseInt(Value.get(2).toString()), Integer.parseInt(Value.get(3).toString()), Boolean.parseBoolean(Value.get(4).toString()));
-                    BasicCube[] cubeArray = new BasicCube[4];
                     cubeArray[0] = gson.fromJson(SCube1, BasicCube.class);
                     cubeArray[1] = gson.fromJson(SCube2, BasicCube.class);
                     cubeArray[2] = gson.fromJson(SCube3, BasicCube.class);
                     cubeArray[3] = gson.fromJson(SCube4, BasicCube.class);
-                    Output.cube = cubeArray;
-                    SpeedP2 = Integer.parseInt(FinalData.get(5));
-                    ScoreP2 = Integer.parseInt(FinalData.get(6));
-                    //int time = Long.valueOf(FinalData.get(7));
-                    Temp = Integer.parseInt(FinalData.get(8));
+                    if (Output.Shape == 7){
+                        String SCube5 = FinalData.get(5);
+                        String SCube6 = FinalData.get(6);
+                        String SCube7 = FinalData.get(7);
+                        String SCube8 = FinalData.get(8);
+                        String SCube9 = FinalData.get(9);
+                        cubeArray[4] = gson.fromJson(SCube5, BasicCube.class);
+                        cubeArray[5] = gson.fromJson(SCube6, BasicCube.class);
+                        cubeArray[6] = gson.fromJson(SCube7, BasicCube.class);
+                        cubeArray[7] = gson.fromJson(SCube8, BasicCube.class);
+                        cubeArray[8] = gson.fromJson(SCube9, BasicCube.class);
+                        Output.cube = cubeArray;
+                        SpeedP2 = Integer.parseInt(FinalData.get(10));
+                        ScoreP2 = Integer.parseInt(FinalData.get(11));
+                        Long time = Long.valueOf(FinalData.get(12));
+                        totalLines = Integer.parseInt(FinalData.get(13));
+                        winCheck = Boolean.parseBoolean(FinalData.get(14));
+                        opponent = (FinalData.get(15));
+                    }
+                    else {
+                        Output.cube = cubeArray;
+                        SpeedP2 = Integer.parseInt(FinalData.get(5));
+                        ScoreP2 = Integer.parseInt(FinalData.get(6));
+                        Long time = Long.valueOf(FinalData.get(7));
+                        totalLines = Integer.parseInt(FinalData.get(8));
+                        winCheck = Boolean.parseBoolean(FinalData.get(9));
+                        opponent = (FinalData.get(10));
+                    }
                     Dump3Temp.add(Output);
                 } catch (Exception e) {
                     //System.out.println("data output fail\n" +e);
@@ -104,8 +132,7 @@ public class PackerClass implements Runnable{
 
             }
 
-             totalLines += Temp;
-             numberLines =0;
+
 
              Translator();
              Dump3 = Dump3Temp;
@@ -199,12 +226,20 @@ public class PackerClass implements Runnable{
                 try {
                     ArrayList<String> hold = new ArrayList<>();
                     ArrayList holdClone = dump.get(i).CloneData();
-                    String Values  = gson.toJson(holdClone);
+                    String Values = gson.toJson(holdClone);
                     String Cube1 = gson.toJson(dump.get(i).cube[0]);
                     String Cube2 = gson.toJson(dump.get(i).cube[1]);
                     String Cube3 = gson.toJson(dump.get(i).cube[2]);
                     String Cube4 = gson.toJson(dump.get(i).cube[3]);
                     hold.add(Values);hold.add(Cube1);hold.add(Cube2);hold.add(Cube3);hold.add(Cube4);
+                    if (dump.get(i).Shape == 7) {
+                        String Cube5 = gson.toJson(dump.get(i).cube[4]);
+                        String Cube6 = gson.toJson(dump.get(i).cube[5]);
+                        String Cube7 = gson.toJson(dump.get(i).cube[6]);
+                        String Cube8 = gson.toJson(dump.get(i).cube[7]);
+                        String Cube9 = gson.toJson(dump.get(i).cube[8]);
+                        hold.add(Cube5);hold.add(Cube6);hold.add(Cube7);hold.add(Cube8);hold.add(Cube9);
+                    }
                     hold.add(String.valueOf(thisSpeed));
                     hold.add(String.valueOf(score));
                     //Getting the current date
@@ -213,12 +248,15 @@ public class PackerClass implements Runnable{
                     long timeMilli = date.getTime();
                     hold.add(String.valueOf(timeMilli));
                     hold.add(String.valueOf(numberLines));
+                    hold.add(String.valueOf(currentCheck));
+                    hold.add(String.valueOf(Player));
                     fullArray.add(gson.toJson(hold));
                 } catch (Exception e){
                     System.out.println("error not able store this data");
                 }
             }
         }
+
         try {
             //Adds playerBlock
             ArrayList<String> hold = new ArrayList<>();
@@ -300,6 +338,7 @@ public class PackerClass implements Runnable{
     public void run() {
         while (true) {
             if (StopCode == true){
+                GameP2P.sendOFF(Results);
                 break;
             }
             else {
