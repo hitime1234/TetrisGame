@@ -1,0 +1,11 @@
+neeed this for something
+tmux new-window -a -n SampleWindows
+tmux new-session -d -s SampleWindows -n SSH0 -d
+tmux selectp -t SampleWindows
+tmux bind-key -n M-Left previous-window -t SampleWindows
+tmux bind-key -n M-Right next-window -t SampleWindows
+tmux new-window -n sampleOne -t SampleWindows
+tmux new-window -n sampleTwo -t SampleWindows
+tmux send-keys -t SampleWindows:0 './sampleScript' C-m
+tmux send-keys -t SampleWindows:1 './sampleScript2.sh' C-m
+tmux attach -t WinSplit
