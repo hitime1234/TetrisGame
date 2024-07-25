@@ -16,54 +16,76 @@ import com.badlogic.gdx.utils.viewport.ExtendViewport;
 
 
 public class ServerRank implements Screen {
+    //LIBGDX required variables
     final MyGdxGame game;
+    private final Stage stage;
+    OrthographicCamera camera;
+    //font texture
     private final BitmapFont font;
-    private final GameScreen2 ProFortniteGamer;
+
+
+    private final GameScreen2 gameScreen2;
+
+    //user input for text
     private final TextField ServerIp;
     private final TextField Port;
     public final TextField username;
     private final TextField password;
+    //checkbox
     private final CheckBox button9;
+    //text output
     private final TextField Rank;
     private final TextField HighScore;
     private final TextField Time;
     private final TextField GameWon;
-    private int speedInt = 1;
-    private int random = 0;
+
+    //networking status message
     private String Connection = "waiting to connect";
 
 
-    private Stage stage;
 
 
-    OrthographicCamera camera;
+
+    //networking class
     private Networking Client = null;
+
+    //initialisation of variables
     private String Score;
     private String time;
     private String Nwin;
     private String Ranker;
 
+
+
     public ServerRank(final MyGdxGame game) {
+        //Screen resolution
         Gdx.graphics.setWindowedMode(950, 580);
         stage = new Stage(new ExtendViewport(800, 480, 1080, 1920));
+        //actor/object input processor
         Gdx.input.setInputProcessor(stage);
+        //LIBGDX game super class
         this.game = game;
+        //sets camera resolution and class
         camera = new OrthographicCamera();
         camera.setToOrtho(false, 800, 480);
+        //gets new texture file for text
         font = new BitmapFont();
+        //gets skin from constants
         Skin skin = new Skin(Gdx.files.internal(gameConstants.skin));
-        ProFortniteGamer = new GameScreen2(game);
+        //DEBUG screen initialise
+        gameScreen2 = new GameScreen2(game);
 
         //final Button button2 = new TextButton("play",skin);
         //converted to a CheckBox
         button9 = new CheckBox("Sign up?",skin);
 
+        //buttons
         Button button4 = new TextButton("Go Back",skin);
         Button button8 = new TextButton("connect",skin);
 
 
 
-
+        //initialise buttons
         button9.getLabelCell().padLeft(7);
         button9.setSize(gameConstants.col_width*2,gameConstants.col_height/2);
         button9.setPosition(15,200);
@@ -71,7 +93,7 @@ public class ServerRank implements Screen {
         button9.scaleBy(0.1f);
 
 
-
+        //Give buttons actions
         button4.setSize(gameConstants.col_width*2,gameConstants.col_height/2);
         button4.setPosition(gameConstants.col_width*2+95,Gdx.graphics.getHeight()-(gameConstants.col_width*7/4));
         button4.setTransform(true);
@@ -97,22 +119,22 @@ public class ServerRank implements Screen {
             public boolean touchDown(InputEvent event,float x,float y,int pointer,int button) {
                 try {
                     Client = new Networking(ServerIp.getText(), Integer.valueOf(Port.getText()), username.getText(), password.getText(),button9.isChecked(),1);
-                    if (Client.GetRecv().equals("Die SCUM")) {
+                    if (Networking.GetRecv().equals("Die SCUM")) {
                         Connection = "Failed to connect to server \n try different username or password \n server ip and port";
                         Client = null;
-                    } else if (Client.GetRecv().equals("Account Created")){
+                    } else if (Networking.GetRecv().equals("Account Created")){
                         Connection = "your account was made successfully\nyou agree to conditions,\n that the password can't be changed.";
                     }
-                    else if (Client.GetRecv().equals("Already exists")){
+                    else if (Networking.GetRecv().equals("Already exists")){
                         Connection = "Your account  and  connection,\nfailed due to overlapping account details.";
                     }
-                    else if (Client.GetRecv().equals("Error Couldn't be added")) {
+                    else if (Networking.GetRecv().equals("Error Couldn't be added")) {
                         Connection = "Error Couldn't be added due to a server failure";
                     }
                     else {
-                        System.out.println(Client.GetRecv());
+                        System.out.println(Networking.GetRecv());
                         Connection = "Successfully connected";
-                        String Data = Client.GetRecv();
+                        String Data = Networking.GetRecv();
                         String[] Array = Data.split(",");
                         Score = Array[2];
                         time = Array[3];
@@ -129,6 +151,7 @@ public class ServerRank implements Screen {
             }
         });
 
+        //initialisation output text
         Rank = new TextField("--",skin);
         Rank.setSize(gameConstants.col_width*3/3,gameConstants.col_height/4);
         Rank.setPosition(370,320);
@@ -153,7 +176,7 @@ public class ServerRank implements Screen {
 
 
 
-
+        //initialisation input text
         ServerIp = new TextField("127.0.0.1",skin);
         ServerIp.setSize(gameConstants.col_width*3/2,gameConstants.col_height/4);
         ServerIp.setPosition(50,400);
@@ -170,15 +193,18 @@ public class ServerRank implements Screen {
         username.setPosition(50,300);
         username.scaleBy(0.3f);
 
+
+
         password = new TextField("admin",skin);
         password.setSize(gameConstants.col_width*3/2,gameConstants.col_height/4);
         password.setPosition(50,250);
+        //input text set to password character hiding
         password.setPasswordMode(true);
         password.setPasswordCharacter('*');
         password.scaleBy(0.3f);
 
+        //adds actors/objects to screen
         stage.addActor(button4);
-
         stage.addActor(button9);
         stage.addActor(ServerIp);
         stage.addActor(Port);
@@ -197,19 +223,23 @@ public class ServerRank implements Screen {
 
     @Override
     public void render(float delta) {
+        //updates screen
         ScreenUtils.clear(0, 0, 0.2f, 1);
         camera.update();
         game.batch.setProjectionMatrix(camera.combined);
+        //anti alisa
         font.getRegion().getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         stage.act(delta);
         stage.draw();
 
+        //updates on screen text
         Rank.setText(Ranker);
         Time.setText(time);
         HighScore.setText(Score);
         GameWon.setText(Nwin);
 
+        //Draws ui text
         game.batch.begin();
         game.font.getData().setScale(1.2f,1.0f);
         game.font.draw(game.batch, "Welcome to Tetris VS", gameConstants.centerX-10, gameConstants.screenHeight+80);
@@ -228,8 +258,8 @@ public class ServerRank implements Screen {
         game.font.draw(game.batch,"number of Games won:", 400, 210);
         game.font.draw(game.batch,"Note ranking starts at 0.", 720, 500);
         game.batch.end();
-        
 
+        //old code for touch input
         //if (Gdx.input.isTouched()) {
         if (false){
             System.out.println("test");
@@ -261,6 +291,7 @@ public class ServerRank implements Screen {
 
     @Override
     public void dispose() {
+        //deletes assets from memory
         stage.dispose();
         game.batch.dispose();
     }

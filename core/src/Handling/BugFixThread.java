@@ -9,12 +9,18 @@ import java.util.ArrayList;
 
 public class BugFixThread extends Thread{
 
+    //global board
     board DeadBlock;
+    //global dump to be used by multiple methods
     ArrayList<basicBlock> DUMP;
+    //gets data from TETRISGAME using passingDATA
     passingData data;
+    //thread run status
     boolean run = true;
 
+    //initialises data
     public BugFixThread(passingData dataThroughPut){
+        //gets data from class
         DeadBlock = dataThroughPut.data2;
         DUMP = dataThroughPut.data1;
         data = dataThroughPut;
@@ -27,12 +33,16 @@ public class BugFixThread extends Thread{
 
     @Override
     public void run() {
+        //checks if there are any errors
             lineChecksBlanks();
+            //fixes underflow errors in the board
             UnderFlow();
+            //updates board of the tetris game
             applyValues();
     }
 
     public int logicalArrayLength(basicBlock[] passedArray) {
+        //gets the length of the array passed into it
         int count = 0;
         for (int i = 0; i < passedArray.length; i++) {
             if (passedArray[i] != null) {
@@ -42,6 +52,7 @@ public class BugFixThread extends Thread{
         return count;
     }
     public int IntLogicalArrayLength(int[] passedArray) {
+        //gets the length of the array passed into it for integers array
         int count = 0;
         for (int i = 0; i < passedArray.length; i++) {
             if (passedArray[i] != 0) {
@@ -52,11 +63,13 @@ public class BugFixThread extends Thread{
     }
 
     public void applyValues(){
+        //updates Tetris games variables
         data.setData1(DUMP);
         data.data2 = (DeadBlock);
     }
 
     public void lineChecksBlanks(){
+        //checks if there is a blank row and rebuilds the board
         int[] hold= DeadBlock.CheckClearBlanks();
         int LinesCleared = IntLogicalArrayLength(hold);
         int DUMPsIZE = DUMP.size();
@@ -69,6 +82,7 @@ public class BugFixThread extends Thread{
         }
     }
     public void UnderFlow(){
+        //fixes errors on the board array and rebuilds it correctly
         for (int i=0;i<DUMP.size();i++){
             for (int y=0;y<DUMP.get(i).cube.length;y++) {
                 if (DUMP.get(i).cube[y] != null) {

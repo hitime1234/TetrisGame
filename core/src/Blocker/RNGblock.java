@@ -5,24 +5,27 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import java.util.Vector;
 
 public class RNGblock {
-    private basicBlock hold;
+    //base spawn locations
+    private final basicBlock hold;
     public int x = 350;
     public int y = 500;
     public int speed;
 
     public RNGblock(ShapeRenderer drawing, int nextInt, int speed) {
         //Literally here to do one thing. BUILD
-
+        //class the create method
         hold = Create(drawing,nextInt,speed);
     }
 
     public basicBlock getHold() {
+        //returns the current created block
         return hold;
     }
 
     public basicBlock Create(ShapeRenderer draw, int num, int speed) {
         basicBlock temp;
         this.speed = speed;
+        //chooses one a block method so a block can be created using it shapes method
         switch (num){
             case 0:
                 temp = Line(draw);
@@ -54,24 +57,28 @@ public class RNGblock {
         return temp;
     }
 
+
+    //class the basic block constructor
+    //gets creates vector array - not used any more
+    //returns new block
     private basicBlock HitTheJ(ShapeRenderer draw) {
-        int Vector[][] = new int[8][2];
+        int[][] Vector = new int[8][2];
         return new basicBlock(draw,x,y,speed, Vector,5);
     }
 
 
     private basicBlock diagR(ShapeRenderer draw) {
-        int Vector[][] = new int[8][2];
+        int[][] Vector = new int[8][2];
         return new basicBlock(draw,x,y,speed, Vector,4);
     }
 
     private basicBlock diagL(ShapeRenderer draw) {
-        int Vector[][] = new int[8][2];
+        int[][] Vector = new int[8][2];
         return new basicBlock(draw,x,y,speed, Vector,6);
     }
 
     private basicBlock TMan(ShapeRenderer draw) {
-        int Vector[][] = new int[8][2];
+        int[][] Vector = new int[8][2];
         return new basicBlock(draw,x,y,speed,Vector,1);
     }
 
@@ -82,9 +89,9 @@ public class RNGblock {
          *  x x
          *  [0,0],[1,0],[0,1],[1,1]
          */
-        //Warning memes about vectors below
-        //Oh yeah 2d Vector array Initialised
-        int Vector[][] = new int[8][4];
+        //retracted -Vector meme-
+
+        int[][] Vector = new int[8][4];
         //[0,0]
         //X axis
         Vector[0][0] = x;
@@ -105,12 +112,12 @@ public class RNGblock {
     }
 
     private basicBlock HitTheL(ShapeRenderer draw) {
-        int Vector[][] = new int[8][4];
+        int[][] Vector = new int[8][4];
         return new basicBlock(draw,x,y,speed, Vector,2);
     }
 
     private basicBlock Line(ShapeRenderer draw) {
-        int Vector[][] = new int[8][4];
+        int[][] Vector = new int[8][4];
         //[0,0]
         //X axis
         Vector[0][0] = x;

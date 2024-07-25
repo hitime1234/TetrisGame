@@ -7,6 +7,7 @@ import java.net.Socket;
 
 
 public class Networking implements Runnable{
+    //variables for the class
     private static String dataToSend= "hello1";
     private static Socket sock;
     private static String DataToRecv = "";
@@ -17,14 +18,17 @@ public class Networking implements Runnable{
     private InputStream is;
     public boolean ready = false;
 
+    //sets data class variable
     public static void sendOFF(String data){
         dataToSend = data;
     }
 
+    //gets data received by the thread client
     public static String GetRecv(){
         return DataToRecv;
     }
 
+    //checks for received packets
     public static String Recv(BufferedReader in){
         String userOut = "";
         try {
@@ -41,11 +45,13 @@ public class Networking implements Runnable{
         return userOut.replace(";::;","\n");
     }
 
+    //sets data to server
     public static void send(PrintWriter writer,String data){
         writer.println(data.replace("\n",";::;"));
         writer.flush();
     }
 
+    //sets data to server and receive data after
     public int p2pMode(PrintWriter writerToClient,BufferedReader in,InputStream is){
         String hold = "";
 
@@ -84,6 +90,7 @@ public class Networking implements Runnable{
 
 
 
+    //constructor creates connection with server and logins authenticates with it
     public Networking(String ServerIp,int Port,String Username,String Password,boolean Signup,int Type){
         this.username = Username;
         this.password = Password;
@@ -125,6 +132,7 @@ public class Networking implements Runnable{
 
     @Override
     public void run() {
+        //tells the server to place it on the match making queue
         //send and recv
         String hold = "";
         boolean run = true;

@@ -14,9 +14,9 @@ public class GameScreen2 implements Screen {
     SpriteBatch batch;
     Texture img;
     public int RandomMode = 0;
-    private Rectangle bucket;
-    private OrthographicCamera camera;
-    private Texture bucketImage;
+    private final Rectangle bucket;
+    private final OrthographicCamera camera;
+    private final Texture bucketImage;
 
     public void setRandomMode(int randomMode) {
         RandomMode = randomMode;

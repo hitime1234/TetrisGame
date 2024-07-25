@@ -7,11 +7,14 @@ import java.util.ArrayList;
 
 public class board {
     public int[][] Boarder;
+
     public board(){
+        //creates new array for board
         Boarder = new int[2000][2000];
         BuildArray();
     }
     public void BuildArray(){
+        //initialises the array with all zeros
         for (int x=0;x<800;x++){
             for (int y=0;y<800;y++){
                 Boarder[y][x] = 0;
@@ -19,25 +22,28 @@ public class board {
         }
         //bug fix for the bottom of the screen
         for (int x=0;x<800;x++){
+            //adds a board at the bottom to prevent blocks clipping outside the boundary
                 Boarder[25][x] = 1;
         }
     }
 
+
     public void Output(){
+        //debug output for the tetris game board
         for (int x=0;x<600;x++){
             System.out.print("[");
             for (int y=20;y<800;y++){
                 System.out.print(Boarder[y][x] + ",");
             }
             System.out.print("]");
-            System.out.println("");
+            System.out.println();
         }
     }
 
-    //Something Dumb is just a random variable name
-    public void add(basicBlock SomethingDumb,ArrayList<basicBlock> Dump2){
-        int Type = SomethingDumb.Shape;
-        BasicCube[] hold = SomethingDumb.getCube();
+    //adds/draws block to the board
+    public void add(basicBlock block,ArrayList<basicBlock> Dump2){
+        int Type = block.Shape;
+        BasicCube[] hold = block.getCube();
             /**
              * new approached required
              * For example
@@ -49,14 +55,16 @@ public class board {
             //DrawY(vector[i][1],holdX,holdY);
 
             //}
-            DrawTypeRectangle(SomethingDumb,Dump2);
+            DrawTypeRectangle(block,Dump2);
     }
 
     public int[] CheckClear(){
-        int array[] = new int[50];
+        //check for if a row of blocks has filled a line
+        int[] array = new int[50];
         int lineCleared = 0;
         int count = 0;
         int index = 0;
+        //creates an array of lines that have been filled
         for (int y=1;y<30;y++) {
             count = 0;
             for (int i = 10; i < 30; i++) {
@@ -74,7 +82,8 @@ public class board {
 
 
     public int[] CheckClearBlanks(){
-        int array[] = new int[50];
+        //check if there are any blank spots on the board prevent bugs
+        int[] array = new int[50];
         int lineCleared = 0;
         int count = 0;
         int index = 0;
@@ -99,11 +108,15 @@ public class board {
 
 
     public boolean Check(basicBlock SomethingDumb){
+        //collision detection
         //bottom axis
+
         int Type = SomethingDumb.Shape;
+
         boolean hold = false;
         boolean hold1 = false;
         boolean hold2 = false;
+
         BasicCube[] holder = SomethingDumb.getCube();
         for (int x=0;x<SomethingDumb.getNumberOCubes();x++) {
 
@@ -116,18 +129,19 @@ public class board {
 
 
             //x axis
-
             for (int i = 0; i < length; i++) {
+                //checks for intersection
                 if (Boarder[vector[0][1]][vector[0][0] + i] == 1) {
-                    hold1 = true;
+                    hold = true;
                 } else if (Boarder[vector[2][1]][vector[2][0] + i] == 1) {
-                    hold2 = true;
+                    hold = true;
                 }
             }
 
 
             //y axis
             for (int i = 0; i < height; i++) {
+                //checks for intersection
                 if (Boarder[vector[0][1] + i][vector[0][0] + 1] == 1) {
                     hold = true;
                 }
@@ -151,6 +165,7 @@ public class board {
         return hold;
     }
 
+    //not in use
     public boolean CheckNoEdit(basicBlock SomethingDumb){
         //bottom axis
         int Type = SomethingDumb.Shape;
@@ -195,6 +210,7 @@ public class board {
 
 
     public void ClearRow(int line,int newStart){
+        //sets a number of lines to empty
             for (int i=0;i<800;i++){
                 for (int x=newStart;x<((line*25)+newStart);x++) {
                     Boarder[x][i] = 0;
@@ -206,9 +222,12 @@ public class board {
 
 
 
+
+
     public void DrawTypeRectangle(basicBlock block,ArrayList Dump2){
         //bottom axis
         try {
+            //uses the values from the cube to calculate the length and height and draws lines on 2d array
             for (int x = 0; x < block.getNumberOCubes(); x++) {
                 BasicCube[] holder = block.getCube();
                 if (holder[x] != null) {
@@ -236,6 +255,7 @@ public class board {
 
             }
         } catch (ArrayIndexOutOfBoundsException e){
+             //moves cube around to fix the error
              UnderFlow(Dump2);
              DrawTypeRectangle(block,Dump2);
         }
@@ -243,6 +263,7 @@ public class board {
     }
 
     public void UnderFlow(ArrayList<basicBlock> DUMP){
+        //rebuilds the board to fix the array and to successfully place a block.
         for (int i=0;i<DUMP.size();i++){
             for (int y=0;y<DUMP.get(i).cube.length;y++) {
                 if (DUMP.get(i).cube[y] != null) {

@@ -13,55 +13,64 @@ import Handling.*;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 
-import java.io.*;
-import java.net.Socket;
-import java.util.Random;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
 public class Settings implements Screen {
     final MyGdxGame game;
     private final BitmapFont font;
-    private final GameScreen2 ProFortniteGamer;
 
-    private final TextField SpeedText;
+
+    //note these variables isn't in use because the features was never finished
+    private final TextField ColorblindMode;
+    private String ColorBlindString = "Normal";
+    private int ColourBlindSelection = 1;
+    //end
+
+    //text screens for the keybindings
     private final TextField RIGHT;
     private final TextField LEFT;
     private final TextField Flip;
     private final TextField down;
-
-    private int id;
-    private CSVManager file;
-
-    private int KeyCode = 0;
+    private final int KeyCode = 0;
     private final TextField Hold;
     private final TextField HardDrop;
-    private int speedInt = 1;
-    private int random = 0;
-    private String ColorBlindMode = "Normal";
-    private Stage stage;
+
+
+
+    //access to the CSV file
+    private CSVManager file;
+
+
+
+
+    //displays/draws objects on screen
+    private final Stage stage;
+
+    //keybindings real int values
     private int KeyRight;
     private int keyLeft;
     private int keyFlip;
     private int keyHold;
     private int keyHardDrop;
     private int keySoftDrop;
+
+    //status of checking for key presses
     private boolean checking = false;
 
 
 
 
-
+    //camera for stage required to display objects
     OrthographicCamera camera;
-    private String PholdData;
-    private String holdData;
+
+
 
     public Settings(final MyGdxGame game)  {
+        //gets stage
         stage = new Stage(new ExtendViewport(800, 480, 1080, 1920));
         Gdx.input.setInputProcessor(stage);
         file = new CSVManager("TESTROOT.csv",1);
 
 
+        //old network test code
         //Client1 = new Networking("127.0.0.1",25565,"admin","admin",false,0);
         //Client2 = new Networking("127.0.0.1",25565,"admin","admin",false,0);
         //threadPool = Executors.newCachedThreadPool();
@@ -74,7 +83,7 @@ public class Settings implements Screen {
         camera.setToOrtho(false, 800, 480);
         font = new BitmapFont();
         Skin skin = new Skin(Gdx.files.internal(gameConstants.skin));
-        ProFortniteGamer = new GameScreen2(game);
+
 
         //final Button button2 = new TextButton("play",skin);
         //converted to a CheckBox
@@ -260,13 +269,13 @@ public class Settings implements Screen {
         button6.addListener(new InputListener(){
             @Override
             public boolean touchDown(InputEvent event,float x,float y,int pointer,int button) {
-                System.out.println("speed up");
-                if (speedInt < 4) {
-                    speedInt = speedInt + 1;
+                //System.out.println("speed up");
+                if (ColourBlindSelection < 4) {
+                    ColourBlindSelection = ColourBlindSelection + 1;
                 }
                 else{
-                    if (speedInt == 4){
-                        speedInt = 1;
+                    if (ColourBlindSelection == 4){
+                        ColourBlindSelection = 1;
                     }
                 }
                 return true;
@@ -280,12 +289,12 @@ public class Settings implements Screen {
         button7.addListener(new InputListener(){
             @Override
             public boolean touchDown(InputEvent event,float x,float y,int pointer,int button) {
-                System.out.println("speed down");
-                if (speedInt > 1) {
-                    speedInt = speedInt - 1;
+                //System.out.println("speed down");
+                if (ColourBlindSelection > 1) {
+                    ColourBlindSelection = ColourBlindSelection - 1;
                 }else{
-                    if (speedInt == 1){
-                        speedInt = 4;
+                    if (ColourBlindSelection == 1){
+                        ColourBlindSelection = 4;
                     }
                 }
 
@@ -296,10 +305,10 @@ public class Settings implements Screen {
 
 
 
-        SpeedText = new TextField(Integer.toString(speedInt),skin);
-        SpeedText.setSize(gameConstants.col_width*3/2,gameConstants.col_height/4);
-        SpeedText.setPosition(gameConstants.screenWidth/2+110,Gdx.graphics.getHeight()-(gameConstants.col_width*3-20));
-        SpeedText.scaleBy(0.2f);
+        ColorblindMode = new TextField(Integer.toString(ColourBlindSelection),skin);
+        ColorblindMode.setSize(gameConstants.col_width*3/2,gameConstants.col_height/4);
+        ColorblindMode.setPosition(gameConstants.screenWidth/2+110,Gdx.graphics.getHeight()-(gameConstants.col_width*3-20));
+        ColorblindMode.scaleBy(0.2f);
 
 
         KeyRight = file.getRIGHTKey();
@@ -361,7 +370,6 @@ public class Settings implements Screen {
         stage.addActor(down);
         stage.addActor(HardDrop);
         stage.addActor(Nuke);
-        id = 0;
 
     }
     @Override
@@ -386,8 +394,6 @@ public class Settings implements Screen {
 
     @Override
     public void render(float delta) {
-        //Random mode selector
-        //needs update with switch case for better performance
         RIGHT.setText(Input.Keys.toString(KeyRight));
         LEFT.setText(Input.Keys.toString(keyLeft));
         down.setText(Input.Keys.toString(keySoftDrop));
@@ -411,21 +417,22 @@ public class Settings implements Screen {
 
 
 
-        switch (speedInt){
+        //feature never implemented
+        switch (ColourBlindSelection){
             case 1:
-                ColorBlindMode = "normal";
+                ColorBlindString = "normal";
                 break;
             case 2:
-                ColorBlindMode = "Deuteranopia";
+                ColorBlindString = "Deuteranopia";
                 break;
             case 3:
-                ColorBlindMode = "Protanopia";
+                ColorBlindString = "Protanopia";
                 break;
             case 4:
-                ColorBlindMode = "Trianopia";
+                ColorBlindString = "Tritanopia";
                 break;
         }
-        SpeedText.setText(ColorBlindMode);
+        ColorblindMode.setText(ColorBlindString);
 
 
 
@@ -435,10 +442,13 @@ public class Settings implements Screen {
         camera.update();
         game.batch.setProjectionMatrix(camera.combined);
 
+        //draws actors/object on screen
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        //checks for input for actors/objects
         stage.act(delta);
         stage.draw();
 
+        //draws text for the ui
         game.batch.begin();
         game.font.getData().setScale(1.2f,1.2f);
         game.font.draw(game.batch, "KeyBindings", 120, gameConstants.screenHeight-40);
@@ -451,12 +461,19 @@ public class Settings implements Screen {
         game.batch.end();
         
 
+        //old touch screen code
         //if (Gdx.input.isTouched()) {
+        /*
         if (false){
             System.out.println("test");
             game.setScreen(new GameScreen(game));
             dispose();
         }
+
+         */
+
+
+
     }
 
     @Override

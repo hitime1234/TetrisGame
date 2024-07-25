@@ -23,12 +23,12 @@ public class basicBlock {
     private int height = 25;
     public BasicCube[] cube;
     private Boolean Damage = false;
-    //this copium --jackus
-    //fix your code god dammit
+
 
 
 
     public String WriteToCsv(int[][] myArray) throws UnsupportedEncodingException {
+        //for multiplayer encoding using csv multiplayer encoding
         StringBuilder res = new StringBuilder();
         for (int[] ints : myArray) {
             for (int anInt : ints) res.append(URLEncoder.encode(String.valueOf(anInt), "UTF-8")).append(",");
@@ -39,6 +39,7 @@ public class basicBlock {
 
 
     public int[][] read(String res) throws UnsupportedEncodingException {
+        //read multiplayer encoding using csv file format
         String[] rows = res.split("\n");
         int[][] myArray = new int[rows.length][];
         for (int iRow = 0; iRow < rows.length; iRow++) {
@@ -54,6 +55,7 @@ public class basicBlock {
 
 
     public ArrayList CloneData() throws UnsupportedEncodingException {
+        //clones data for multiplayer csv file format
         ArrayList<String> data = new ArrayList<>();
         data.add(WriteToCsv(Vector));
         data.add(String.valueOf(Shape));
@@ -66,6 +68,7 @@ public class basicBlock {
 
 
     public void SetValues(int[][] Vector,int shape,int length,int height,boolean Damage){
+        //sets the values using given values/ For multiplayer function from tetrisgame
         this.Vector = Vector;
         this.Shape = shape;
         this.length = length;
@@ -74,8 +77,10 @@ public class basicBlock {
     }
 
     public boolean CheckGreaterX(int x){
+        //check for highest x value on a block
         boolean result = false;
         for (int i=0;i<getNumberOCubes();i++) {
+
             if (cube[i].getX() >= x){
                 result = true;
             }
@@ -84,8 +89,10 @@ public class basicBlock {
     }
 
     public boolean CheckLessX(int x){
+        //checks for the lowest x value on a block.
         boolean result = false;
         for (int i=0;i<getNumberOCubes();i++) {
+
             if (cube[i].getX() <= x){
                 result = true;
             }
@@ -93,21 +100,34 @@ public class basicBlock {
         return result;
     }
 
-    public int HeightOfBlock(){
-        int TempHigh = cube[0].getY();
-        int TempLow = cube[0].getY();
-        for (int i=0;i<getNumberOCubes();i++){
-            if (TempHigh <= cube[i].getY()){
-                TempHigh = cube[i].getY();
-            }
-            if (TempLow >= cube[i].getY()){
-                TempLow = cube[i].getY();
+    public boolean CheckGreaterY(int y){
+        //check for highest x value on a block
+        boolean result = false;
+        for (int i=0;i<getNumberOCubes();i++) {
+
+            if (cube[i].getY() >= y){
+                result = true;
             }
         }
-        return  TempHigh - TempLow;
+        return result;
     }
 
+    public boolean CheckLessY(int y){
+        //checks for the lowest x value on a block.
+        boolean result = false;
+        for (int i=0;i<getNumberOCubes();i++) {
+
+            if (cube[i].getY() <= y){
+                result = true;
+            }
+        }
+        return result;
+    }
+
+
+
     private void CubeCreator(){
+        //this creates the many shapes of tetris blocks using cubes
         switch (Shape) {
             //cube
             case 0:
@@ -198,24 +218,28 @@ public class basicBlock {
 
 
     public basicBlock(ShapeRenderer draw, int x, int y, int speed, int[][] vector, int shape) {
+        //this is the constructor creates block using values given by rngBlock
         this.x = x;
         this.y = y;
         this.speed = speed;
         this.draw = draw;
         Vector = vector;
         this.Shape = shape;
-
         CubeCreator();
     }
 
     public basicBlock clone()  {
+        //clones the values of the object
        return new basicBlock(draw,x,y,speed,Vector,Shape);
     }
 
 
 
     public void flip() {
+        //checks if the block is a square
+        //because squares can't be flipped
         if (Shape != -1) {
+            //it sets the new cube x and y values using the x and y using math sin curves equation.
             for (int i = 0; i < getNumberOCubes(); i++) {
                 int newX = findingX(cube[i], i);
                 int newY = findingY(cube[i],i);
@@ -227,6 +251,8 @@ public class basicBlock {
     }
 
     private int findingX(BasicCube basicCube, int i) {
+        //uses sin curves to get the new x values
+        //all have been calculated by hand
         int oldX = basicCube.getX();
         int NewX = oldX;
         switch (Shape){
@@ -437,6 +463,8 @@ public class basicBlock {
     }
 
     private int findingY(BasicCube basicCube, int i) {
+        //uses sin curves to get the new y values
+        //all have been calculated by hand
         int oldY = basicCube.getY();
         int NewY = oldY;
         switch (Shape){
@@ -598,6 +626,7 @@ public class basicBlock {
     }
 
     private int[][] FindVector(int Nx, int Ny, int nlength, int nheight) {
+        //this creates vectors for cubes and board calculations
         Vector[0][0] = Nx;
         Vector[0][1] = Ny;
         Vector[1][0] = Nx + nlength;
@@ -611,17 +640,21 @@ public class basicBlock {
 
 
     public void setX(int x) {
+        //remakes the block with new x values
         this.x = x;
         CubeCreator();
     }
 
     public void setY(int y) {
+        //remakes the block with new y values
         this.y = y;
         this.x = cube[1].getX();
         CubeCreator();
     }
 
     public void dropY(int yDrop,int newStart){
+        //lowers the block by the yDrop drop value
+        //it adjusts the board using newStart value
         y = y - yDrop;
         for (int i=0;i<getNumberOCubes();i++){
             if (cube[i] != null) {
@@ -635,8 +668,11 @@ public class basicBlock {
 
 
     public void moveX(int x) {
+        //moves the block by a specific amount
         this.x = this.x - x;
+        //for loop through every cube
         for (int i = 0; i < getNumberOCubes(); i++) {
+            //adjustment of the y value
             if (cube[i] != null) {
                 cube[i].setX(cube[i].getX() + x);
             }
@@ -644,8 +680,11 @@ public class basicBlock {
     }
 
     public void moveY(int x) {
+        //moves the block by a specific amount
         y = y - x;
+        //for loop through every cube
         for (int i = 0; i < getNumberOCubes(); i++) {
+            //adjustment of the y value
             if (cube[i] != null) {
                 cube[i].setY(cube[i].getY() - x);
             }
@@ -653,6 +692,7 @@ public class basicBlock {
     }
 
     public int getX() {
+        //gets the central x value
         return cube[1].getX();
     }
 
@@ -664,10 +704,12 @@ public class basicBlock {
     }
 
     public int getY() {
+        //gets the central y value
         return cube[1].getY();
     }
 
     public int GetLowestY(){
+        //gets the lowest Y value for a block
         int hold = 0;
         hold = cube[0].getY();
         for (int i=0;i<getNumberOCubes();i++){
@@ -679,19 +721,24 @@ public class basicBlock {
     }
 
     public int getNumberOCubes() {
+        //gets the number of cubes
         return cube.length;
     }
 
     public BasicCube[] getCube() {
+        //returns the cubes for a block
         return cube;
     }
 
     public boolean RemoveCube(int index) {
+        //not in use
         return false;
     }
 
 
     public int[][] getVector(int index) {
+        //not use
+        //used to get manual Vector values
         switch (Shape) {
             case 0:
                 /**
@@ -755,6 +802,7 @@ public class basicBlock {
 
 
     public void pass() {
+        //drops the block automatically
         y = y - 25;
         for (int i = 0; i < getNumberOCubes(); i++) {
             cube[i].setY(cube[i].getY() - 25);
@@ -762,7 +810,7 @@ public class basicBlock {
     }
 
     public Color getColor(){
-
+        //sets the colour of the block
         switch (Shape){
             //cube
             case 0:
@@ -787,6 +835,7 @@ public class basicBlock {
     }
 
     public void CreateCube(int xHold,int yHold,int BLength, int BHeight){
+        //this is the more complex cube rendering with colour
         for (int i=0;i<=5;i++) {
             //B L-R
             draw.line(xHold, yHold+i, xHold + BLength, yHold+i, getColor(), getColor());
@@ -805,6 +854,7 @@ public class basicBlock {
 
     public void draw() {
         for (int i = 0; i < cube.length; i++) {
+            //draws the cubes one by one in a for loop
             try {
                 if (cube[i] != null) {
                     if (Damage == true){
@@ -820,7 +870,10 @@ public class basicBlock {
                     xHold = (xHold/25)*30;
                     draw.begin(ShapeRenderer.ShapeType.Filled);
 
+                    //old render method
                     //draw.rect(xHold, yHold, BLength, BHeight);
+
+                    //new render method
                     CreateCube(xHold, yHold, BLength, BHeight);
                     draw.end();
                 }

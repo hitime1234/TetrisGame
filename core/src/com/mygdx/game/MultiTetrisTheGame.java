@@ -38,7 +38,7 @@ public class MultiTetrisTheGame extends ScreenAdapter implements Screen  {
     private final Stage stage;
     private final ExecutorService threadPool;
     private PackerClass NUTJ =null;
-    private Networking GameP2P;
+    private final Networking GameP2P;
     private queue queuing;
     private final long start;
     private BitmapFont font;
@@ -64,7 +64,7 @@ public class MultiTetrisTheGame extends ScreenAdapter implements Screen  {
     private int speed;
     private boolean grace = false;
     private int OSpeed;
-    private float y;
+    private final float y;
     private int score =0;
     private float x;
     private final float width;
@@ -108,7 +108,7 @@ public class MultiTetrisTheGame extends ScreenAdapter implements Screen  {
     private int totalSent =0;
     private boolean youWin;
     private boolean currentStatus;
-    private int NumWin = 0;
+    private final int NumWin = 0;
 
     public void LoseScreen(){
         loseScreen = true;
@@ -277,9 +277,9 @@ public class MultiTetrisTheGame extends ScreenAdapter implements Screen  {
                 .create();
 
         data = Serialize();
-        GameP2P.sendOFF(data);
-        if (GameP2P.GetRecv().isEmpty() == false && !GameP2P.GetRecv().equals("[") && !GameP2P.GetRecv().equals("]")) {
-            String store = GameP2P.GetRecv();
+        Networking.sendOFF(data);
+        if (Networking.GetRecv().isEmpty() == false && !Networking.GetRecv().equals("[") && !Networking.GetRecv().equals("]")) {
+            String store = Networking.GetRecv();
             //file.ForceWrite(store,data);
             unSerialize(store);
         }
@@ -402,18 +402,18 @@ public class MultiTetrisTheGame extends ScreenAdapter implements Screen  {
     public void Counter(SpriteBatch batch){
         //Draws Text and resizes it for the game
         font.getData().setScale(2.2f,1.8f);
-        font.draw(batch, "Score: "+Integer.toString(score), 500, 630);
+        font.draw(batch, "Score: "+ score, 500, 630);
         font.getData().setScale(1.5f,1.25f);
-        font.draw(batch, "Speed: "+Integer.toString(OSpeed), 500, 590);
-        font.draw(batch, "Lines Sent: "+Integer.toString(totalSent/2), 50, 200);
+        font.draw(batch, "Speed: "+ OSpeed, 500, 590);
+        font.draw(batch, "Lines Sent: "+ totalSent / 2, 50, 200);
     }
 
     public void Player2Counter(SpriteBatch batch){
         //Draws Text and resizes it for the game
         font.getData().setScale(2.2f,1.8f);
-        font.draw(batch, "Score: "+Integer.toString(Player2Score), 1080, 630);
+        font.draw(batch, "Score: "+ Player2Score, 1080, 630);
         font.getData().setScale(1.5f,1.25f);
-        font.draw(batch, "Speed: "+Integer.toString(Player2Speed), 1080, 590);
+        font.draw(batch, "Speed: "+ Player2Speed, 1080, 590);
     }
 
 
@@ -499,7 +499,7 @@ public class MultiTetrisTheGame extends ScreenAdapter implements Screen  {
 
     //preview of holdhold block
     public void DrawHold(){
-        if (queuing.getHold() == null){
+        if (queuing.getHold() == null || loseScreen == true || youWin == true){
         }
         else{
             holdQueue.setX(80);
@@ -512,7 +512,7 @@ public class MultiTetrisTheGame extends ScreenAdapter implements Screen  {
     //preview of player 2 holdhold block
     public void Player2DrawHold(){
         Player2Hold = NUTJ.getPlayer2hold();
-        if (Player2Hold == null){
+        if (Player2Hold == null || loseScreen == true || youWin == true){
         }
         else{
             Player2Hold.setX(750);
@@ -657,23 +657,28 @@ public class MultiTetrisTheGame extends ScreenAdapter implements Screen  {
     }
 
     public void DrawNextInLine(){
-        basicBlock Next1 = queuing.getObjects(queuing.getIndex()).clone();
-        basicBlock Next2 = queuing.getObjects(queuing.getIndex()+1).clone();
-        basicBlock Next3 = queuing.getObjects(queuing.getIndex()+2).clone();
-        if (Next1 != null){
-            Next1.setX(573);
-            Next1.setY(370);
-            Next1.draw();
+        if (loseScreen == true || youWin == true){
+
         }
-        if (Next2 != null){
-            Next2.setX(573);
-            Next2.setY(240);
-            Next2.draw();
-        }
-        if (Next3 != null){
-            Next3.setX(573);
-            Next3.setY(120);
-            Next3.draw();
+        else {
+            basicBlock Next1 = queuing.getObjects(queuing.getIndex()).clone();
+            basicBlock Next2 = queuing.getObjects(queuing.getIndex() + 1).clone();
+            basicBlock Next3 = queuing.getObjects(queuing.getIndex() + 2).clone();
+            if (Next1 != null) {
+                Next1.setX(573);
+                Next1.setY(370);
+                Next1.draw();
+            }
+            if (Next2 != null) {
+                Next2.setX(573);
+                Next2.setY(240);
+                Next2.draw();
+            }
+            if (Next3 != null) {
+                Next3.setX(573);
+                Next3.setY(120);
+                Next3.draw();
+            }
         }
     }
 
@@ -777,136 +782,55 @@ public class MultiTetrisTheGame extends ScreenAdapter implements Screen  {
 
 
             if (Gdx.input.isKeyPressed(keyFlip) && Sleep <= 0) {
-                boolean flag = false;
-                FlipMusic.play();
-                PlayerBlock.flip();
 
+                //flips block in basicblock
+                if (PlayerBlock.Shape != 0) {
+                    //IT's a cube
+                    PlayerBlock.flip();
+                    FlipMusic.play();
+                }
 
+                //check out of bounds
+                while (PlayerBlock.CheckLessX(225)){
 
-                if (PlayerBlock.Shape == 0) {
+                    PlayerBlock.moveX(25);
+                }
 
-                } else {
-                    while (PlayerBlock.cube[0].getY() < 25 || PlayerBlock.cube[1].getY() < 25 || PlayerBlock.cube[2].getY() < 25 || PlayerBlock.cube[3].getY() < 25) {
-                        PlayerBlock.moveY(-25);
+                while (PlayerBlock.CheckGreaterX(500)){
 
+                    PlayerBlock.moveX(-25);
+                }
 
-                        flag = true;
-                    }
-                    if (flag) {
-                        PlayerBlock.moveY(25);
-
-
-
-                    }
-
-
-                    while (PlayerBlock.cube[0].getX() >= 425 && PlayerBlock.cube[1].getX() >= 425 && PlayerBlock.cube[2].getX() >= 425 && PlayerBlock.cube[3].getX() >= 425) {
-                        if (PlayerBlock.cube[0].getX() >= 425 && PlayerBlock.cube[1].getX() >= 425 && PlayerBlock.cube[2].getX() >= 425 && PlayerBlock.cube[3].getX() >= 425) {
-                            PlayerBlock.moveX(-25);
-
-                        }
-                    }
-                    if (PlayerBlock.Shape == 3) {
-                        PlayerBlock.moveX(-25);
-
-                    }
-
-
-                    while (PlayerBlock.cube[0].getX() <= 300 && PlayerBlock.cube[1].getX() <= 300 && PlayerBlock.cube[2].getX() <= 300 && PlayerBlock.cube[3].getX() <= 300) {
-                        if (PlayerBlock.cube[0].getX() <= 300 && PlayerBlock.cube[1].getX() <= 300 && PlayerBlock.cube[2].getX() <= 300 && PlayerBlock.cube[3].getX() <= 300) {
-                            PlayerBlock.moveX(25);
-
-                        }
-                    }
-                    //fixes line piece bug causing piece to go off board
-                    if (PlayerBlock.Shape == 3) {
-                        PlayerBlock.moveX(25);
-
-                    }
-                    if (Gdx.input.isKeyPressed(keyLeft) && !PlayerBlock.CheckGreaterX(425) && !PlayerBlock.CheckLessX(300)){
-                        PlayerBlock.moveX(-25);
-
-                    }
-                    else if(Gdx.input.isKeyPressed(KeyRight) && !PlayerBlock.CheckGreaterX(425) && !PlayerBlock.CheckLessX(300)){
-                        PlayerBlock.moveX(25);
-
-                    }
-
-
-                    while (DeadBlock.Check(PlayerBlock)) {
-                        flag = true;
-                        if (DeadBlock.Check(PlayerBlock)) {
-                            PlayerBlock.moveX(25);
-                            if (DeadBlock.Check(PlayerBlock)) {
-                                PlayerBlock.moveX(-25);
-                                PlayerBlock.moveX(-25);
-
-                                if (DeadBlock.Check(PlayerBlock)) {
-                                    PlayerBlock.moveX(25);
-                                    PlayerBlock.moveY(-25);
-
-                                }
-                            } else {
-                                //No issue
-                            }
-                        }
-                    }
-                    if (flag) {
-                        PlayerBlock.moveY(25);
-                    }
-
-
-
-
-                    if ((PlayerBlock.CheckLessX(300) || PlayerBlock.CheckGreaterX(425) || PlayerBlock.cube[0].getY() < 25 || PlayerBlock.cube[1].getY() < 25 || PlayerBlock.cube[2].getY() < 25 || PlayerBlock.cube[3].getY() < 25) && flag){
-                        boolean flag1 = false;
-                        boolean flag2 = false;
-                        boolean flag3 = false;
-
-                       while (PlayerBlock.CheckLessX(300) || DeadBlock.Check(PlayerBlock)){
-                           flag1 = true;
-                           PlayerBlock.moveX(25);
-                           if (PlayerBlock.CheckGreaterX(425)){
-                               PlayerBlock.moveX(-125);
-                               PlayerBlock.moveY(-25);
-                           }
-                       }
-                       while (PlayerBlock.CheckGreaterX(425) || DeadBlock.Check(PlayerBlock)){
-                           flag2 = true;
-                           PlayerBlock.moveX(-25);
-                           if (PlayerBlock.CheckLessX(300)){
-                               PlayerBlock.moveX(125);
-                               PlayerBlock.moveY(-25);
-                           }
-                       }
-                       while (PlayerBlock.cube[0].getY() < 25 || PlayerBlock.cube[1].getY() < 25 || PlayerBlock.cube[2].getY() < 25 || PlayerBlock.cube[3].getY() < 25 || DeadBlock.Check(PlayerBlock)){
-                           flag3 = true;
-                           PlayerBlock.moveY(-25);
-                       }
-                    }
-
-
-
-
-
-
-
+                while (PlayerBlock.CheckLessY(25)){
+                    PlayerBlock.moveY(-25);
                 }
 
 
-                Sleep = 900;
+                //intersection
+                while (DeadBlock.Check(PlayerBlock)){
+                    PlayerBlock.moveY(-25);
+                }
+                PlayerBlock.moveY(25);
+
+
+                //set the time until keypresses are accepted
+                Sleep = 1200;
+
+
             }
+
 
             //debug key
-            if (Gdx.input.isKeyJustPressed(Input.Keys.F)) {
-                //Clear(50);
-                //DeadBlock.ClearRow(1,51);
-                //LoseScreen();
-                //score = score + 100000;
-                //OSpeed++;
+            if (Gdx.input.isKeyJustPressed(Input.Keys.F) && false) {
+                Clear(50);
+                DeadBlock.ClearRow(1,51);
+                LoseScreen();
+                score = score + 100000;
+                OSpeed++;
 
-                //NUTJ.numberLines += 1;
+                NUTJ.numberLines += 1;
             }
+
 
             //bugfix
             fixBug.start();
@@ -932,7 +856,7 @@ public class MultiTetrisTheGame extends ScreenAdapter implements Screen  {
                     Player2Block.draw();
                 }
                 catch (Exception e){
-                    System.out.println("no player 2");
+                    System.err.println("no player 2");
                 }
             }
 
@@ -1118,8 +1042,7 @@ public class MultiTetrisTheGame extends ScreenAdapter implements Screen  {
             LosingScreen(delta);
         }
 
-        batch.end();
-        batch.begin();
+
         if (loseScreen != true) {
             Counter(batch);
             Player2Counter(batch);
@@ -1131,7 +1054,7 @@ public class MultiTetrisTheGame extends ScreenAdapter implements Screen  {
         DrawNextInLine();
 
         if (youWin){
-            NUTJ.Results = "Result:"+ String.valueOf(score) + "," + String.valueOf(System.currentTimeMillis() - StartTime) + "," + String.valueOf(NumWin+1)+",";
+            NUTJ.Results = "Result:"+ score + "," + (System.currentTimeMillis() - StartTime) + "," + (NumWin + 1) +",";
             NUTJ.Stop(true);
             batch.setProjectionMatrix(camera.combined);
             batch.begin();
@@ -1151,7 +1074,6 @@ public class MultiTetrisTheGame extends ScreenAdapter implements Screen  {
     private void SentLines() {
         int sent = NUTJ.totalLines;
         Lines  = sent - TotalRecieved;
-
         for (int g=0;g<Lines;g++) {
             DeadBlock.BuildArray();
             basicBlock BlockLine = new basicBlock(shapeRenderer,250,25,0,new int[20][20],7);

@@ -15,10 +15,10 @@ import com.badlogic.gdx.utils.ScreenUtils;
 public class GameScreen implements Screen {
     SpriteBatch batch;
     Texture img;
-    private Rectangle bucket;
-    private OrthographicCamera camera;
-    private Texture bucketImage;
-    private MyGdxGame gamer;
+    private final Rectangle bucket;
+    private final OrthographicCamera camera;
+    private final Texture bucketImage;
+    private final MyGdxGame gamer;
 
     public GameScreen(MyGdxGame game) {
         gamer =game;

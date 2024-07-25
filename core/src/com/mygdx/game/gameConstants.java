@@ -3,7 +3,9 @@ package com.mygdx.game;
 import com.badlogic.gdx.Gdx;
 
 public class gameConstants {
-    public static final String skin = new String("gdx-skins-master\\quantum-horizon\\skin\\quantum-horizon-ui.json");
+    //location of the skin for the game
+    public static final String skin = "gdx-skins-master\\quantum-horizon\\skin\\quantum-horizon-ui.json";
+    //initial screen sizes
     public static final int screenWidth = Gdx.graphics.getWidth();
     public static final int screenHeight = Gdx.graphics.getHeight();
     public static final int centerX = screenWidth/2;

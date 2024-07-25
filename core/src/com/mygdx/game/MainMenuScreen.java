@@ -1,5 +1,4 @@
 package com.mygdx.game;
-
 import Handling.CSVManager;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
@@ -18,16 +17,28 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 
 public class MainMenuScreen implements Screen {
+    //required libgdx variables
     final MyGdxGame game;
     private final BitmapFont font;
-    public CSVManager File;
-
-    private Stage stage;
-
-
+    private final Stage stage;
     OrthographicCamera camera;
 
+    //class for CSV management
+    public CSVManager File;
+
+    //initialises all the buttons
+    public void Button_Initial(Button button, int width, int height,int x,int y){
+        button.setSize(width,height);
+        button.setPosition(x,y);
+        button.setTransform(true);
+        button.scaleBy(0.1f);
+
+    }
+
+
+
     public void CreateSessionFile(){
+        //creates csv class
         File = new CSVManager("TESTROOT.csv",1);
         //file Layout
         //version index 0
@@ -37,52 +48,48 @@ public class MainMenuScreen implements Screen {
         //Time 4
         //speed 5
 
+        //checks the file is readable
         CSVManager ReadFile = new CSVManager("TESTROOT.csv", 1);
+        //testing data read properly
         System.out.println(ReadFile.getRIGHTKey());
     }
 
     public MainMenuScreen(final MyGdxGame game) {
 
+        //creates the window and screen for the game client
+        //resolution
         Gdx.graphics.setWindowedMode(800, 480);
+        //creates CSV file
         CreateSessionFile();
-        //Get screens for future use
+        //creates object screen
         stage = new Stage(new ExtendViewport(800, 480, 1080, 1920));
+        //where object get their input data from
         Gdx.input.setInputProcessor(stage);
         this.game = game;
         camera = new OrthographicCamera();
         camera.setToOrtho(false, 800, 480);
         font = new BitmapFont();
+
+        //button object initialised
         Skin skin = new Skin(Gdx.files.internal(gameConstants.skin));
         Button button2 = new TextButton("play",skin);
         Button button3 = new TextButton("multiplayer",skin);
         Button button4 = new TextButton("settings",skin);
         Button button5 = new TextButton("exit",skin);
 
-        button2.setSize(gameConstants.col_width*2,gameConstants.col_height/2);
-        button2.setPosition(gameConstants.col_width*2+95,Gdx.graphics.getHeight()-(gameConstants.col_width*1+80));
-        button2.setTransform(true);
-        button2.scaleBy(0.1f);
+        //initialises all the buttons using method to reduce space
+        Button_Initial(button2,gameConstants.col_width*2,gameConstants.col_height/2,gameConstants.col_width*2+95,Gdx.graphics.getHeight()-(gameConstants.col_width*1+80));
+        Button_Initial(button3,gameConstants.col_width*2,gameConstants.col_height/2,gameConstants.col_width*2+95,Gdx.graphics.getHeight()-(gameConstants.col_width*2+40));
+        Button_Initial(button4,gameConstants.col_width*2,gameConstants.col_height/2,gameConstants.col_width*2+95,Gdx.graphics.getHeight()-(gameConstants.col_width*3));
+        Button_Initial(button5,gameConstants.col_width*2,gameConstants.col_height/2,gameConstants.col_width*2+95,Gdx.graphics.getHeight()-(gameConstants.col_width*4-40));
 
-        button3.setSize(gameConstants.col_width*2,gameConstants.col_height/2);
-        button3.setPosition(gameConstants.col_width*2+95,Gdx.graphics.getHeight()-(gameConstants.col_width*2+40));
-        button3.setTransform(true);
-        button3.scaleBy(0.1f);
 
-        button4.setSize(gameConstants.col_width*2,gameConstants.col_height/2);
-        button4.setPosition(gameConstants.col_width*2+95,Gdx.graphics.getHeight()-(gameConstants.col_width*3));
-        button4.setTransform(true);
-        button4.scaleBy(0.1f);
-
-        button5.setSize(gameConstants.col_width*2,gameConstants.col_height/2);
-        button5.setPosition(gameConstants.col_width*2+95,Gdx.graphics.getHeight()-(gameConstants.col_width*4-40));
-        button5.setTransform(true);
-        button5.scaleBy(0.1f);
-
+        //adds the buttons actions
         button2.addListener(new InputListener(){
             @Override
             public boolean touchDown(InputEvent event,float x,float y,int pointer,int button){
                 System.out.println("PRESSED");
-                ((Game) Gdx.app.getApplicationListener()).setScreen(new PracticeModeSelector((MyGdxGame) game));
+                ((Game) Gdx.app.getApplicationListener()).setScreen(new PracticeModeSelector(game));
                 return true;
             }
         });
@@ -90,7 +97,7 @@ public class MainMenuScreen implements Screen {
             @Override
             public boolean touchDown(InputEvent event,float x,float y,int pointer,int button) {
                 System.out.println("button 2");
-                game.setScreen(new MultiSelector((MyGdxGame) game));
+                game.setScreen(new MultiSelector(game));
                 //game.setScreen(new ());
                 return true;
             }
@@ -99,7 +106,7 @@ public class MainMenuScreen implements Screen {
             @Override
             public boolean touchDown(InputEvent event,float x,float y,int pointer,int button) {
                 System.out.println("button 3");
-                ((Game) Gdx.app.getApplicationListener()).setScreen(new Settings((MyGdxGame) game));
+                ((Game) Gdx.app.getApplicationListener()).setScreen(new Settings(game));
                 return true;
             }
         });
@@ -111,6 +118,8 @@ public class MainMenuScreen implements Screen {
                 return true;
             }
         });
+
+        //adds the buttons to the game screen
         stage.addActor(button2);
         stage.addActor(button3);
         stage.addActor(button4);
@@ -123,6 +132,7 @@ public class MainMenuScreen implements Screen {
 
     @Override
     public void render(float delta) {
+        //updates screen
         font.getRegion().getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         stage.act(delta);
         ScreenUtils.clear(0, 0, 0.2f, 1);
@@ -131,18 +141,23 @@ public class MainMenuScreen implements Screen {
 
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
+        //draws text on screen
         game.batch.begin();
         game.font.draw(game.batch, "Welcome to Tetris VS", gameConstants.centerX-60, gameConstants.screenHeight-40);
         game.font.draw(game.batch, "main menu", gameConstants.centerX-30, gameConstants.screenHeight-80);
         game.batch.end();
         
 
+        //old touch screen code
         //if (Gdx.input.isTouched()) {
+        /*
         if (false){
             System.out.println("test");
             game.setScreen(new GameScreen(game));
             dispose();
         }
+        */
+
         stage.draw();
     }
 
@@ -169,6 +184,7 @@ public class MainMenuScreen implements Screen {
 
     @Override
     public void dispose() {
+        //outputs an exit log just in case the disposal of assets fail
         Gdx.app.log("note: ", "dispose called");
         stage.dispose();
         game.batch.dispose();

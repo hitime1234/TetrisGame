@@ -20,39 +20,52 @@ public class MultiSelector implements Screen {
     private final BitmapFont font;
 
 
-    private Stage stage;
+    private final Stage stage;
 
 
     OrthographicCamera camera;
 
+
+    //initialises all the buttons
+    public void Button_Initial(Button button, int width, int height,int x,int y){
+        button.setSize(width,height);
+        button.setPosition(x,y);
+        button.setTransform(true);
+        button.scaleBy(0.1f);
+
+    }
+
     public MultiSelector(final MyGdxGame game) {
+        //sets game screen resolution and game input proceessor
         stage = new Stage(new ExtendViewport(800, 480, 1080, 1920));
         Gdx.input.setInputProcessor(stage);
         this.game = game;
         camera = new OrthographicCamera();
         camera.setToOrtho(false, 800, 480);
+        //sets text font pack
         font = new BitmapFont();
+
+        //gets button/text texture file
         Skin skin = new Skin(Gdx.files.internal(gameConstants.skin));
 
+        //Create buttons with texture
+
+        //creates buttons
         Button button2 = new TextButton("Connect to server",skin);
         Button button3 = new TextButton("connect to tetris game",skin);
         Button button4 = new TextButton("go back",skin);
 
-        button2.setSize(gameConstants.col_width*4,gameConstants.col_height/2);
-        button2.setPosition(gameConstants.col_width+80,Gdx.graphics.getHeight()-(gameConstants.col_width*1+80));
-        button2.setTransform(true);
-        button2.scaleBy(0.1f);
 
-        button3.setSize(gameConstants.col_width*4,gameConstants.col_height/2);
-        button3.setPosition(gameConstants.col_width+80,Gdx.graphics.getHeight()-(gameConstants.col_width*2+40));
-        button3.setTransform(true);
-        button3.scaleBy(0.1f);
+        //resizes and places buttons
+        Button_Initial(button2,gameConstants.col_width*4,gameConstants.col_height/2,gameConstants.col_width+80,Gdx.graphics.getHeight()-(gameConstants.col_width*1+80));
 
-        button4.setSize(gameConstants.col_width*2,gameConstants.col_height/2);
-        button4.setPosition(gameConstants.col_width*2+95,Gdx.graphics.getHeight()-(gameConstants.col_width*35/10));
-        button4.setTransform(true);
-        button4.scaleBy(0.1f);
 
+        Button_Initial(button3,gameConstants.col_width*4,gameConstants.col_height/2,gameConstants.col_width+80,Gdx.graphics.getHeight()-(gameConstants.col_width*2+40));
+
+        Button_Initial(button4,gameConstants.col_width*2,gameConstants.col_height/2,gameConstants.col_width*2+95,Gdx.graphics.getHeight()-(gameConstants.col_width*35/10));
+
+
+        //actions for the buttons
         button2.addListener(new InputListener(){
             @Override
             public boolean touchDown(InputEvent event,float x,float y,int pointer,int button){
@@ -78,10 +91,12 @@ public class MultiSelector implements Screen {
                 return true;
             }
         });
+
+
         stage.addActor(button2);
         stage.addActor(button3);
         stage.addActor(button4);
-    }       
+    }
     @Override
     public void show() {
 
@@ -89,15 +104,18 @@ public class MultiSelector implements Screen {
 
     @Override
     public void render(float delta) {
+        //sets camera prams
         ScreenUtils.clear(0, 0, 0.2f, 1);
         font.getRegion().getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         camera.update();
         game.batch.setProjectionMatrix(camera.combined);
 
+        //Update screen objects and input
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         stage.act(delta);
         stage.draw();
 
+        //draws text
         game.batch.begin();
         game.font.draw(game.batch, "Welcome to Tetris VS", gameConstants.centerX-60, gameConstants.screenHeight-40);
         game.font.draw(game.batch, "main menu", gameConstants.centerX-30, gameConstants.screenHeight-80);

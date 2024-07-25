@@ -11,10 +11,11 @@ import java.util.ArrayList;
 import java.util.Date;
 
 public class PackerClass implements Runnable{
+    //class variables
     private Networking GameP2P = null;
     private basicBlock player;
     private ArrayList<basicBlock> dump;
-    private ShapeRenderer shapeRenderer;
+    private final ShapeRenderer shapeRenderer;
     private ArrayList<basicBlock> Dump3Temp;
     private basicBlock player2;
     private ArrayList<basicBlock> Dump3;
@@ -24,16 +25,20 @@ public class PackerClass implements Runnable{
     public int SpeedP2 =0;
     private basicBlock Player2Hold;
     public basicBlock SendHold;
+    //queue blocks
     public basicBlock P1Next1 = null;
     public basicBlock P1Next2 = null;
     public basicBlock P1Next3 = null;
     public basicBlock P2Next1 = null;
     public basicBlock P2Next2 = null;
     public basicBlock P2Next3 = null;
+    //if the game has been lost or started
     public boolean StopCode = false;
+    //time sent
     public long Time =-1l;
     public boolean allowed  = false;
-    private long Temp =-1l;
+    private final long Temp =-1l;
+    //total line tracking
     public int numberLines =0;
     public int totalLines =0;
     public boolean winCheck = false;
@@ -43,22 +48,27 @@ public class PackerClass implements Runnable{
     public String Results = "";
 
     public void Stop(boolean stopCode) {
+        //always set stop to true
         StopCode = true;
     }
 
     public basicBlock getPlayer2() {
+        //returns player two data
         return player2;
     }
 
     public basicBlock getPlayer2hold() {
+        //returns player two held block data
         return Player2Hold;
     }
 
     public ArrayList<basicBlock> getDump3() {
+        //returns player two placed block data
         return Dump3;
     }
 
     public void unSerialize(String data){
+        //uses google serialization to make a compact string with all data
         ArrayList arrayList = new ArrayList();
         Gson gson = new GsonBuilder()
                 .setPrettyPrinting()
@@ -82,6 +92,7 @@ public class PackerClass implements Runnable{
             arrayList =gson.fromJson(data, ArrayList.class);
              for (int i=0;i<arrayList.size();i++) {
                 try {
+                    //unpacks data and converts it back to its proper form
                     String hold = arrayList.get(i).toString();
                     ArrayList<String> FinalData = gson.fromJson(hold, ArrayList.class);
                     String SValue = FinalData.get(0);
@@ -89,26 +100,34 @@ public class PackerClass implements Runnable{
                     basicBlock Output = new basicBlock(shapeRenderer, 0, 0, 0, new int[4][4], -1);
                     Output.SetValues(Output.read(Value.get(0).toString()), Integer.parseInt(Value.get(1).toString()), Integer.parseInt(Value.get(2).toString()), Integer.parseInt(Value.get(3).toString()), Boolean.parseBoolean(Value.get(4).toString()));
                     BasicCube[] cubeArray = new BasicCube[10];
+                    //unpacks String cube
                     String SCube1 = FinalData.get(1);
                     String SCube2 = FinalData.get(2);
                     String SCube3 = FinalData.get(3);
                     String SCube4 = FinalData.get(4);
+                    //decodes cube into basicCube
                     cubeArray[0] = gson.fromJson(SCube1, BasicCube.class);
                     cubeArray[1] = gson.fromJson(SCube2, BasicCube.class);
                     cubeArray[2] = gson.fromJson(SCube3, BasicCube.class);
                     cubeArray[3] = gson.fromJson(SCube4, BasicCube.class);
+
                     if (Output.Shape == 7){
+                        //if the data contains a send block line additional data is needed to be unpacket
+                        //unpacks String cube
                         String SCube5 = FinalData.get(5);
                         String SCube6 = FinalData.get(6);
                         String SCube7 = FinalData.get(7);
                         String SCube8 = FinalData.get(8);
                         String SCube9 = FinalData.get(9);
+                        //decodes cube into basicCube
                         cubeArray[4] = gson.fromJson(SCube5, BasicCube.class);
                         cubeArray[5] = gson.fromJson(SCube6, BasicCube.class);
                         cubeArray[6] = gson.fromJson(SCube7, BasicCube.class);
                         cubeArray[7] = gson.fromJson(SCube8, BasicCube.class);
                         cubeArray[8] = gson.fromJson(SCube9, BasicCube.class);
+                        //sets cube array to cube array global
                         Output.cube = cubeArray;
+                        //speed and score values converted into integers
                         SpeedP2 = Integer.parseInt(FinalData.get(10));
                         ScoreP2 = Integer.parseInt(FinalData.get(11));
                         Long time = Long.valueOf(FinalData.get(12));
@@ -117,6 +136,7 @@ public class PackerClass implements Runnable{
                         opponent = (FinalData.get(15));
                     }
                     else {
+                        //same code but with additional send blocks
                         Output.cube = cubeArray;
                         SpeedP2 = Integer.parseInt(FinalData.get(5));
                         ScoreP2 = Integer.parseInt(FinalData.get(6));
@@ -125,6 +145,7 @@ public class PackerClass implements Runnable{
                         winCheck = Boolean.parseBoolean(FinalData.get(9));
                         opponent = (FinalData.get(10));
                     }
+                    //adds player line
                     Dump3Temp.add(Output);
                 } catch (Exception e) {
                     //System.out.println("data output fail\n" +e);
@@ -140,6 +161,8 @@ public class PackerClass implements Runnable{
 
 
             try {
+                //packs data and converts it back to its proper form
+                //unpacks dump/placed blocks into it the dumped array
                     String hold = arrayList.get(Dump3.size()).toString();
                     ArrayList<String> FinalData = gson.fromJson(hold, ArrayList.class);
                     String SValue = FinalData.get(0);
@@ -189,6 +212,7 @@ public class PackerClass implements Runnable{
 
 
             } catch (Exception e){
+                //output error if something goes wrong
                 System.out.println(e);
                 System.out.println("player block failed to unpack");
             }
@@ -201,6 +225,7 @@ public class PackerClass implements Runnable{
 
 
     public void Translator(){
+        //moves The blocks to player 2 board
         try {
             for (int i = 0; i < Dump3Temp.size(); i++){
                 if (Dump3Temp != null) {
@@ -224,6 +249,7 @@ public class PackerClass implements Runnable{
         for (int i=0;i<dump.size();i++){
             if (dump != null){
                 try {
+                    //packs data into arrays then serialized strings array then fully serialized
                     ArrayList<String> hold = new ArrayList<>();
                     ArrayList holdClone = dump.get(i).CloneData();
                     String Values = gson.toJson(holdClone);
@@ -317,15 +343,19 @@ public class PackerClass implements Runnable{
         return data;
     }
 
+    //set current player object
     public void setPlayer(basicBlock player) {
         this.player = player;
     }
 
+    //set current dump/placed block array
     public void setDumper(ArrayList<basicBlock> dump) {
         this.dump = dump;
     }
 
+    //constructor
     public PackerClass(Networking client, basicBlock player, ArrayList<basicBlock> dump, ShapeRenderer shapeRenderer){
+        //gets networking classes to be used
         this.GameP2P = client;
         this.player = player;
         this.dump = dump;
@@ -338,13 +368,16 @@ public class PackerClass implements Runnable{
     public void run() {
         while (true) {
             if (StopCode == true){
-                GameP2P.sendOFF(Results);
+                //sends game result if there has been a loss
+                Networking.sendOFF(Results);
                 break;
             }
             else {
+                //sends game data to server
                 String hold = Serialize();
-                GameP2P.sendOFF(hold);
-                String Data = GameP2P.GetRecv();
+                Networking.sendOFF(hold);
+                //receives other players game data from server
+                String Data = Networking.GetRecv();
                 unSerialize(Data);
             }
         }

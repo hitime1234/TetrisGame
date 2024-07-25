@@ -5,7 +5,10 @@ import Blocker.basicBlock;
 import java.util.ArrayList;
 
 public class LoseChecking extends Thread{
+    //uses threading
+
     public ArrayList<basicBlock> BlockArray;
+    //sets a variable if a loss is detected
     public boolean Lose = false;
     public LoseChecking (ArrayList<basicBlock> BlockList){
         BlockArray = BlockList;
@@ -27,6 +30,7 @@ public class LoseChecking extends Thread{
     }
 
     public void LoseCheck(){
+        //checks if any block is above the height limit
         for (int i=0;i<BlockArray.size();i++){
             for (int x =0;x<4;x++) {
                 if(BlockArray.get(i) != null){

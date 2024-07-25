@@ -10,11 +10,9 @@ public class CSVManager {
     private final String FileName;
     public int Error = 0;
     public String directory = System.getProperty("user.home");
-    public String version = "0.0.5v";
-    public String placeholder;
-    private int start = 0;
-    public int index =0;
-    private ArrayList<String> list = new ArrayList<>();
+    public String version = "1.0.0v";
+    //public int index =0;
+    private final ArrayList<String> list = new ArrayList<>();
     private ArrayList<String> Data = new ArrayList<>();
 
 
@@ -32,6 +30,7 @@ public class CSVManager {
     }
 
     public void splitUPData(String line){
+        //loops through string array and places string into arraylist for usage
         Data = new ArrayList<>();
         String[] part = line.split(",");
         for (int i=0;i< part.length;i++) {
@@ -45,11 +44,15 @@ public class CSVManager {
         String absolutePath = directory + System.getProperty("file.separator") + Filename;
         try(BufferedReader bufferedReader = new BufferedReader(new FileReader(absolutePath))) {
             String line = bufferedReader.readLine();
+            //check if line is null
             if (line !=null) {
+                //splits up data
                 splitUP(line);
             }
             line = bufferedReader.readLine();
+            //check if line is null
             if (line !=null) {
+                //splits up data
                 splitUPData(line);
             }
             bufferedReader.close();
