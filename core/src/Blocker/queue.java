@@ -90,7 +90,7 @@ public class queue {
             RNGblock hold = new RNGblock(Drawing, rand.nextInt(6), speed);
             //RNGblock hold =new RNGblock(Drawing, 4, speed);
             basicBlock BUILT = hold.getHold();
-            objects.add( BUILT);
+            objects.add(BUILT);
         }
     }
 
