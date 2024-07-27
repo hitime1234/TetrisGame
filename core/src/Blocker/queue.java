@@ -11,7 +11,7 @@ public class queue {
     private final List<basicBlock> holdBlock = new ArrayList<>();
     private List<basicBlock> BAG = new ArrayList<>();
     public Random rand;
-    private int Type =1;
+    private int Type = 1;
     private int index = 0;
     private int GenIndex =0;
 
@@ -90,7 +90,7 @@ public class queue {
             RNGblock hold = new RNGblock(Drawing, rand.nextInt(6), speed);
             //RNGblock hold =new RNGblock(Drawing, 4, speed);
             basicBlock BUILT = hold.getHold();
-            objects.add(BUILT);
+            objects.add( BUILT);
         }
     }
 
