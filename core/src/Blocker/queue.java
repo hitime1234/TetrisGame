@@ -11,7 +11,7 @@ public class queue {
     private final List<basicBlock> holdBlock = new ArrayList<>();
     private List<basicBlock> BAG = new ArrayList<>();
     public Random rand;
-    private int Type = 1;
+    private int Type =1;
     private int index = 0;
     private int GenIndex =0;
 
@@ -35,21 +35,16 @@ public class queue {
         //something goes here
         //https://stackoverflow.com/questions/29551450/tetris-shape-generation-algorithm-in-java/
         //https://harddrop.com/forums/index.php?showtopic=1925
-        /*
-            WTF IS THIS -Ren
-         */
             for (int x = 0; x < 7; x++) {
                 RNGblock hold = new RNGblock(Drawing, x, speed);
                 basicBlock BUILT = hold.getHold();
                 BAG.add(BUILT);
             }
 
-
             Collections.shuffle(BAG);
             for (int y = 0; y < BAG.size(); y++) {
                 objects.add(BAG.get(y));
             }
-
         System.out.println("Size:" + (objects.size()-index));
         return 1;
     }
@@ -58,6 +53,7 @@ public class queue {
     //creates queue/constructor
     public queue(ShapeRenderer Drawing,int speed,int Type) {
         this.Type = Type;
+
         rand = new Random();
         index = 0;
         //this is based on the choice made in the game launcher
@@ -90,7 +86,7 @@ public class queue {
             RNGblock hold = new RNGblock(Drawing, rand.nextInt(6), speed);
             //RNGblock hold =new RNGblock(Drawing, 4, speed);
             basicBlock BUILT = hold.getHold();
-            objects.add( BUILT);
+            objects.add(i,BUILT);
         }
     }
 
@@ -128,7 +124,7 @@ public class queue {
         objects.add(ob);
     }
     public basicBlock DeQueue(ShapeRenderer Drawing,int speed){
-        //remove block from queue
+        //remove block from queueu
         basicBlock hold = objects.get(index);
         objects.remove(index);
         switch (Type) {
